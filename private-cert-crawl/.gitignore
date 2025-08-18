@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# venv
+.venv/
+venv/
+
+# Selenium/크롤링 산출물
+*.html
+screenshots/
+outputs/
+tmp/
+
+# OS/IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

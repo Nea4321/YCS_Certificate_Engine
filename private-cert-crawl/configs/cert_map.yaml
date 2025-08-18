@@ -1,0 +1,69 @@
+# configs/cert_map.yaml
+certifications:
+  digital_information:
+    tabs:
+      - name: syllabus
+        runner: "digital_information.tabs.syllabus:get_data"
+        normalizer: "digital_information.normalizers.content:normalize_content"
+        target: "시험내용"
+      - name: exam_schedule
+        runner: "digital_information.tabs.exam_schedule:get_data"
+        normalizer: "digital_information.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+
+  linux_master:
+    tabs:
+      - name: exam_schedule
+        runner: "linux_master.tabs.exam_schedule:get_data"
+        normalizer: "linux_master.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+      - name: syllabus
+        runner: "linux_master.tabs.syllabus:get_data"
+        normalizer: "linux_master.normalizers.content:normalize_content"
+        target: "시험내용"
+
+  coding_ability:
+    tabs:
+      - name: exam_schedule
+        runner: "coding_ability.tabs.exam_schedule:get_data"
+        normalizer: "coding_ability.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+      - name: syllabus
+        runner: "coding_ability.tabs.syllabus:get_data"
+        normalizer: "coding_ability.normalizers.content:normalize_content"
+        target: "시험내용"
+
+  Computerized_tax_accounting:
+    tabs:
+      - name: exam_schedule
+        runner: "Computerized_tax_accounting.tabs.exam_schedule:get_data"
+        normalizer: "Computerized_tax_accounting.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+      - name: syllabus
+        runner: "Computerized_tax_accounting.tabs.syllabus:get_data"
+        normalizer: "Computerized_tax_accounting.normalizers.content:normalize_content"
+        target: "시험내용"
+
+  barista:
+    tabs:
+      - name: exam_schedule
+        runner: "barista.tabs.exam_schedule:get_data"
+        normalizer: "barista.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+      - name: syllabus
+        runner: "barista.tabs.syllabus:get_data"
+        normalizer: "barista.normalizers.content:normalize_content"
+        target: "시험내용"
+
+  CS_Leaders:
+    tabs:
+      - name: exam_schedule
+        runner: "CS_Leaders.tabs.exam_schedule:get_data"
+        normalizer: "CS_Leaders.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+      - name: syllabus
+        runner: "CS_Leaders.tabs.syllabus:get_data"
+        normalizer: "CS_Leaders.normalizers.content:normalize_content"
+        target: "시험내용"      
+  
+                  
