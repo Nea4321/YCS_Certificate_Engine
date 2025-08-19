@@ -140,7 +140,8 @@ def main():
     )
     p.add_argument("--cert", help="예: digital_information (미지정시 현재 작업폴더명으로 추론)")
     p.add_argument("--out", help="와 생각도 못했다")
-    # 간단 버전: --tabs/--out 생략. 필요해지면 add_argument로 확장.
+    # 필요하면 콤마분리 탭 선택도 지원 (예: --tabs 시험일정,시험내용)
+    p.add_argument("--tabs", help="실행할 탭 이름들을 콤마(,)로 구분해 지정")
     args = p.parse_args()
 
     cfg = load_cfg()
@@ -148,11 +149,16 @@ def main():
     if not cert:
         raise SystemExit("cert를 알 수 없습니다. --cert 지정 또는 자격증 폴더에서 실행하세요")
     
-    out = args.out or default_output_for(cfg)
+    out = args.out or default_output_for(cert)
     if not out:
          raise SystemExit("out을 알 수 없습니다. --cert 지정 또는 자격증 폴더에서 실행하세요")
+    
+    # --tabs 파싱 (옵션)
+    tabs = None
+    if args.tabs:
+        tabs = [s.strip() for s in args.tabs.split(",") if s.strip()]
 
-    run(cert=cert,out=out)  # tabs/out은 기본값 사용
+    run(cert=cert,out=out,tabs=tabs)  # tabs/out은 기본값 사용
 
 
 if __name__ == "__main__":
