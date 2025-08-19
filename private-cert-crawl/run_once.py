@@ -139,6 +139,7 @@ def main():
         description="자격증 탭 크롤러 (runner → normalizer → v1 validate → save)"
     )
     p.add_argument("--cert", help="예: digital_information (미지정시 현재 작업폴더명으로 추론)")
+    p.add_argument("--out", help="와 생각도 못했다")
     # 간단 버전: --tabs/--out 생략. 필요해지면 add_argument로 확장.
     args = p.parse_args()
 
@@ -146,8 +147,12 @@ def main():
     cert = args.cert or _infer_cert_from_cwd(cfg)
     if not cert:
         raise SystemExit("cert를 알 수 없습니다. --cert 지정 또는 자격증 폴더에서 실행하세요")
+    
+    out = args.out or default_output_for(cfg)
+    if not out:
+         raise SystemExit("out을 알 수 없습니다. --cert 지정 또는 자격증 폴더에서 실행하세요")
 
-    run(cert=cert)  # tabs/out은 기본값 사용
+    run(cert=cert,out=out)  # tabs/out은 기본값 사용
 
 
 if __name__ == "__main__":
