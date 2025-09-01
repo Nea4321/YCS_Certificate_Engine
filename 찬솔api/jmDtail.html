@@ -1,0 +1,419 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<script type="text/JavaScript">
+<!--
+var paramJmCd = "";
+var jobSearch = "";
+
+$(document).ready(function(){
+	
+    if(jobSearch == "Y"){  // 일자리찾기 링크로 올경우
+        goContents('subtab4');
+    }else{
+        //[Q-Net-네이버 연계에 따른 자료 요청] 2011.04.00 jungho START
+        if ('' == "gbnSubtab1") {
+            goContents('subtab1');
+        } else if ('' == "gbnSubtab2") {
+            goContents('subtab2');
+        } else if ('' == "gbnSubtab3") {
+            goContents('subtab3');
+        } else if ('' == "gbnSubtab4") {
+            goContents('subtab4');
+        } else if ('' == "gbnSubtab5") {
+            goContents('subtab5');
+        } else {
+            goContents('subtab1');
+        }
+        //[Q-Net-네이버 연계에 따른 자료 요청] STOP
+    }
+	
+	$(document).attr("title", $("#jmNm_crf00505").val()+" - 국가자격 종목별 상세정보 | Q-net");
+	
+	$("#jmNm1").css("ime-mode","active");
+
+	$("ul.tabList li a").click(function (){
+		var subtab = "sub"+ $(this).attr("id");
+		if(subtab=="subtab4"){
+			$("#printBtn").hide();
+		} else {
+			$("#printBtn").show();
+		}
+		goContents(subtab);
+			
+	});
+
+// 	$("#searchPopup").click(function() {
+// 		searchJM();
+// 	});
+
+	$("#jmNm1").keypress(function(e) {
+		if(e.keyCode == 13){
+			searchJM();
+		}
+	});
+
+	$( "#printBtn" ).click(function() {
+		//print_set('$0',175,125,100,200,0);
+// 		window.print();
+		goPrint();
+	});
+});
+
+// function paseXml(xml){
+	
+// 	var item  = $(xml).find("item");
+// 	$(item).each(function(){
+// 		alert(1);
+// 		$("results").append($("enclosure").attr("url").text() + "<br/>" );
+// 	});
+// }
+
+// 하위 메뉴 선택
+function goContents(val)
+{
+	// 이미 선택된 건 처리 안함
+	if(	form2.sub_tab.value == val) return;
+
+	form2.sub_tab.value = val;
+	var url = "";
+	
+	if(jobSearch == "Y"){
+		$("#printCtr").hide();
+	}else{
+		$("#printCtr").show();
+	}
+
+	if(val == "subtab1")       // 시험정보
+	{
+		if(jobSearch == "Y" ) return; //일자리찾기링크로 올경우 처음에 실행안함
+		
+		form2.jmInfoDivCcd.value = "B0" ;
+		url ="/crf005.do?id=crf00503s02&gSite=Q&gId="+"&jmCd="+form2.jmCd.value+"&jmInfoDivCcd="+form2.jmInfoDivCcd.value+"&jmNm="+form2.jmNm.value;
+		$("#subtab1").prop("class","on");
+		$("#subtab2").prop("class","");
+		$("#subtab3").prop("class","");
+		$("#subtab4").prop("class","");
+		$("#subtab6").prop("class","");
+		$("#subtab7").prop("class","");
+		$("#tab1").attr("title","선택됨");
+		$("#tab2").removeAttr("title");
+		$("#tab3").removeAttr("title");
+		$("#tab4").removeAttr("title");
+		$("#tab6").removeAttr("title");
+	}
+	else if(val == "subtab2")  // 기본정보
+	{
+		form2.jmInfoDivCcd.value = "A0" ;
+		url ="/crf005.do?id=crf00503s01&gSite=Q&gId="+"&jmCd="+form2.jmCd.value+"&jmInfoDivCcd="+form2.jmInfoDivCcd.value+"&jmNm="+form2.jmNm.value;
+		$("#subtab1").prop("class","");
+		$("#subtab2").prop("class","on");
+		$("#subtab3").prop("class","");
+		$("#subtab4").prop("class","");
+		$("#subtab6").prop("class","");
+		$("#subtab7").prop("class","");
+		$("#tab2").attr("title","선택됨");
+		$("#tab1").removeAttr("title");
+		$("#tab3").removeAttr("title");
+		$("#tab4").removeAttr("title");
+		$("#tab6").removeAttr("title");
+	}
+	else if(val == "subtab3")  // 우대현황
+	{
+		form2.jmInfoDivCcd.value = "C0" ;
+		url ="/crf005.do?id=crf00503s03&gSite=Q&gId="+"&jmCd="+form2.jmCd.value+"&jmInfoDivCcd="+form2.jmInfoDivCcd.value+"&jmNm="+form2.jmNm.value;
+		$("#subtab1").prop("class","");
+		$("#subtab2").prop("class","");
+		$("#subtab3").prop("class","on");
+		$("#subtab4").prop("class","");
+		$("#subtab6").prop("class","");
+		$("#subtab7").prop("class","");
+		$("#tab3").attr("title","선택됨");
+		$("#tab1").removeAttr("title");
+		$("#tab2").removeAttr("title");
+		$("#tab4").removeAttr("title");
+		$("#tab6").removeAttr("title");
+	}
+	else if(val == "subtab4")  // 직업훈련정보
+	{
+		jobSearch = "";
+		// form2.jmInfoDivCcd.value = "D0" ;
+		url ="/crf005.do?id=crf00503s04&gSite=Q&gId="+"&jmCd="+form2.jmCd.value+"&mapJmCd="+form2.mapJmCd.value+"&jmNm="+form2.jmNm.value;
+		$("#subtab1").prop("class","");
+		$("#subtab2").prop("class","");
+		$("#subtab3").prop("class","");
+		$("#subtab4").prop("class","on");
+		$("#subtab6").prop("class","");
+		$("#subtab7").prop("class","");
+		$("#tab4").attr("title","선택됨");
+		$("#tab1").removeAttr("title");
+		$("#tab2").removeAttr("title");
+		$("#tab3").removeAttr("title");
+		$("#tab6").removeAttr("title");
+	}
+ 	/*else if(val == "subtab5")  // 취업정보
+	{
+		 form2.jmInfoDivCcd.value = "E0" ;
+		url ="/crf005.do?id=crf00503s05&gSite=Q&gId="+"&jmCd="+form2.jmCd.value+"&mapJmCd="+form2.mapJmCd.value+"&jmNm="+form2.jmNm.value;
+	}*/
+	else if(val == "subtab6")  // 수험자 기초통계
+	{
+		//form2.jmInfoDivCcd.value = "F0" ;
+		url ="/crf005.do?id=crf00503s06&gSite=Q&gId=&examInstiCd=&jmCd="+form2.jmCd.value+"&mapJmCd="+form2.mapJmCd.value+"&jmNm="+form2.jmNm.value;
+		$("#subtab1").prop("class","");
+		$("#subtab2").prop("class","");
+		$("#subtab3").prop("class","");
+		$("#subtab4").prop("class","");
+		$("#subtab6").prop("class","on");
+		$("#subtab7").prop("class","");
+		$("#tab6").attr("title","선택됨");
+		$("#tab1").removeAttr("title");
+		$("#tab2").removeAttr("title");
+		$("#tab3").removeAttr("title");
+		$("#tab4").removeAttr("title");
+	}	else if(val == "subtab7")  // 신규
+	{
+		form2.jmInfoDivCcd.value = "D0" ;
+		url ="/crf005.do?id=crf00503s07&gSite=Q&gId="+"&jmCd="+form2.jmCd.value+"&jmInfoDivCcd="+form2.jmInfoDivCcd.value+"&jmNm="+form2.jmNm.value;
+		$("#subtab1").prop("class","");
+		$("#subtab2").prop("class","");
+		$("#subtab3").prop("class","");
+		$("#subtab4").prop("class","");
+		$("#subtab6").prop("class","");
+		$("#subtab7").prop("class","on");
+		$("#tab7").attr("title","선택됨");
+		$("#tab1").removeAttr("title");
+		$("#tab2").removeAttr("title");
+		$("#tab3").removeAttr("title");
+		$("#tab6").removeAttr("title");
+		$("#printBtn").hide();
+		
+	}
+
+	if(val == "subtab6"){
+		$("#contentView").html("");
+// 		$("#sub_frame").attr("src",url);
+		var view = "applcntTrend";
+		$("#applcntTrend").show();
+		callAjaxView(view, url, "", true);
+
+		if(!false){
+			alert("수험자 동향 그래프는 익스플로어 또는 크롬이 아닌경우\n정상동작하지 않을 수 있습니다.");
+		}
+	} else {
+// 		$("#sub_frame").attr("src","");
+		$("#applcntTrend").hide();
+		goProcContentView(url);
+	}
+}
+
+
+function goProcContentView(aUrl) {
+	callAjaxView("contentView",aUrl,"",true);
+}
+
+function fileDown(filePath,fileName,atchFileSeq,artlSeq) {
+	fDownFrame.location.href = "cst006.do?id=cst00602s01&gSite=Q&gId=&fileCode=R001&filePath="+ filePath
+			+"&fileName="+ fileName
+			+"&fileSeq="+ atchFileSeq
+			+"&artlSeq=" + artlSeq
+			+"&href=0";
+}
+
+// 하위 iframe 사이즈 조정
+function resize_it(f_height){
+	$("#sub_frame").css("height",f_height);         //iframe 사이즈 조절
+}
+
+
+
+function goPrint() {
+	var subTabval = form2.sub_tab.value;
+	
+	// 	var divAhtml = "";
+	// 	var divShtml = "";
+	
+	if ( "etc" == "safari"   ){
+		// 사파리에서 strong 태그 관련 글씨가 깨지는 현상때문에 출력시 strong 태그  공백으로 replace 한다.
+// 		divAhtml =  $('#divAttendContents').html().replace(/<strong>/g,  "");
+// 		divAhtml =  divAhtml.replace(/<\/strong>/g,  "");
+// 		$('#divAttendContents').html(divAhtml);
+
+// 		divShtml =  $('#divSelContents').html().replace(/<strong>/g,  "");
+// 		divShtml =  divShtml.replace(/<\/strong>/g,  "");
+// 		divShtml =  divShtml.replace(/bold/g,  "");
+// 		$('#divSelContents').html(divShtml);
+	}
+	
+	//추가 출력전 시험에필요한정보멘트 가려줌 
+	 $("#printX").hide();
+	
+	var tabHtml = "";
+
+	tabHtml = subTabval === "subtab6"? $("#applcntTrend").html() : $(".contTab_Group").html() + '<script type="text/javascript"> setCont();<\/script>';
+// 	tabHtml = $(".contTab_Group").html();
+	
+// 	var iframeLen = $("[id^=contents_frame]").length;
+	var printWindow = window.open('','printWindow','height=1000,width=1406');
+
+    printWindow.document.write(
+            '<!DOCTYPE html>'
+            + '<html lang="ko">'
+            + '<head>'
+            + '<meta charset="utf-8" />'  
+            + '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'
+            + '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>'
+            + '<link rel="stylesheet" type="text/css" href="/qnet/type/css/common.css" />'
+            + '<link rel="stylesheet" type="text/css" href="/qnet/type/css/cont_qnet.css" />'
+            + '<link rel="stylesheet" type="text/css" href="/qnet/type/css/cont_qnetB.css" />'
+            + '<script type="text/javascript" src="/qnet/js/jquery-1.11.1.min.js"/>'
+            + '<script type="text/javascript" src="/qnet/js/common.js?v=1" />'
+            + '</head>'
+            + '<body>'
+            + tabHtml
+//             + '<script type="text/javascript"> setCont();<\/script>'
+            + '</body>'
+            + '</html>'
+        );
+		
+		printWindow.addEventListener('afterprint', function(){
+			if(!false) printWindow.close();
+		});
+	
+		setTimeout(function(){
+			printWindow.print();
+		},1000);
+		
+	 $("#printX").show();
+}
+
+//-->
+</script>
+										<form name="form2" onsubmit="return false">
+											<input type="hidden" name="sub_tab" value="" />
+											<input type="hidden" name="jmInfoDivCcd" value="" />
+											<!-- 하위탭에 따른 정보 -->
+											<input type="hidden" name="jmCd" value="2290" />
+											<!-- 2012.08.06 수험자 기초통계 추가 -->
+											<input type="hidden" name="statisYy" value="" />
+											<input type="hidden" name="fromSeq" value="" />
+											<input type="hidden" name="toSeq" value="" />
+											<input type="hidden" name="seqNo" value="" />
+											<input type="hidden" name="trendDiv" value="" />
+											<input type="hidden" name="trendDetail" value="" />
+
+											<!-- 종목검색팝업 -->
+											<div id="searchPopup_view" class="popup" ></div>
+
+											
+											<!-- AS-IS ~2024
+											<!-- search -- >
+											<div class="searchType search_item">
+												<span>
+													<label for="jmNm1"><strong>종목명</strong></label>
+													<input type="text" style="width:150px" id="jmNm1" />
+													<button type="button" class="btn3_icon search" id="searchPopup"><span class="blind">검색</span></button>
+												</span>
+											</div>
+											 -->
+											<!-- /search -->
+
+											<input type="hidden" name="mapJmCd" value="5002290" />
+											<input type="hidden" name="jmNm" id="jmNm_crf00505" value="정보처리산업기사" />
+											<input type="hidden" name="instiCd" value="R013" />
+											<input type="hidden" name="instiNm3" value="한국산업인력공단" />
+									
+											<!-- /개발시 class="other" 로 타기관 & 산업인력공단 구분 처리 필요 -->
+											<div class="itemInformation">	
+												<div class="itemTxt">
+													<b class="headLine2">정보처리산업기사</b>
+													<p class="eng">Industrial Engineer Information Processing</p>
+														<ul class="info">
+															<li>
+																<b>관련부처</b>
+																과학기술정보통신부
+															</li>
+															<li>
+																<b>시행기관</b>
+																한국산업인력공단
+															</li>
+															
+						
+							<!--  
+								2016.07.21 jws add : 김종호 대리 요청 과정평가형 자격 취득 가능 종목 문구 추가
+									 2011 ( 기계가공조립산업기사 ) ,2025( 컴퓨터응용가공산업기사 ) ,2026( 용접산업기사 )
+									,2028( 사출금형산업기사 ) ,2029( 프레스금형산업기사 ) ,2031( 기계설계산업기사 )
+									,2034( 생산자동화산업기사 ) ,2090( 치공구설계산업기사 ) ,2104( 정밀측정산업기사 )
+									,2760( 귀금속가공산업기사 ) ,9536( 컨벤션기획사2급 ) ,6012( 컴퓨터응용선반기능사 )
+									,6032( 컴퓨터응용밀링기능사 ) ,6040( 연삭기능사 ) ,6042( 기계가공조립기능사 )
+									,6105( 금형기능사 ) ,6120( 정밀측정기능사 ) ,6151( 전산응용기계제도기능사 )
+									,6222( 특수용접기능사 ) ,6223( 용접기능사 ) ,6251( 공유압기능사 )
+									,6415( 생산자동화기능사 ) ,6560( 화학분석기능사 ) ,6785( 전자캐드기능사 )
+									,6790( 전자기기기능사 ) ,7460( 귀금속가공기능사 ) ,7834( 타워크레인운전기능사 )
+									,7864( 천장크레인운전기능사 ) ,7908( 이용사 ) ,7937( 미용사(일반) )							
+							 -->
+							
+															<li>
+																<b>기타사항</b>
+																과정평가형 자격 취득 가능 종목
+															</li>
+														
+														</ul>
+													</div>
+
+													<div class="itemImg">
+														<img src="/qnet/type/img/common/per/qualInfo/logo_hrdk.png" alt="한국산업인력공단-HUMAN RESOURCES DEVELOPMENT SERVICE OF KOREA" />
+													</div>
+
+				<!-- <img src="content/hrdkorea_logo.gif" alt="한국산업인력공단-HUMAN RESOURCES DEVELOPMENT SERVICE OF KOREA" /> -->
+
+
+												</div><!-- //itemInformation -->
+										
+											<!-- 자격정보 탭 -->
+											<div class="contTabBase" role="tabEl">
+												<ul class="tabList">
+													<li id="subtab1" class="on" ><a href="#none" id="tab1" title="선택됨">시험정보</a></li>
+													<li id="subtab2" ><a href="#none" id="tab2">기본정보</a></li>
+													<li id="subtab3" ><a href="#none" id="tab3">우대현황</a></li>
+													<li id="subtab4" ><a href="#none" id="tab4">일자리정보</a></li>
+													<li id="subtab6" ><a href="#none" id="tab6">수험자동향</a></li>
+					<!-- 							<li id="subtab7" ><a href="#none" id="tab7">인포그래픽정보</a></li>  201805 임시제거 김종호대리요청  -->
+												</ul>
+											</div>
+											<!-- //자격정보 탭 -->
+											
+											<div class="contTab_Group" id="contentView"></div>
+<!-- 										<iframe id="sub_frame" title="수험자동향 정보" src="" width="100%" scrolling="no" frameborder="0" ></iframe>//2014.12.03 : 수험자동향 클릭시 보이게 처리 요청 -->
+											<div id="applcntTrend" class="contTab"></div>
+
+											<div class="btnArea" id="printCtr">
+												<button type="button" class="baseBtn" id="printBtn" title="인쇄_새창열림"> <!-- 2025 06 12 웹 접근성 -->
+													<span class="base">인쇄</span>
+												</button>
+											</div>
+
+										</form>
+										<iframe name="fDownFrame" title="빈프레임" src="" scrolling="no" frameborder="0" style="display:none"></iframe><!-- //2014.12.11 KJH : 파일다운로드용 빈 프레임 -->

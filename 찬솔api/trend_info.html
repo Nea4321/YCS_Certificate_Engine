@@ -1,0 +1,188 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+<script type="text/javascript">
+$(document).ready(function () {
+        fnChaart();
+    });
+
+<!--
+$(document).ready(function(){
+
+	//parent.goContents('subtab6');
+	var iFramCts = typeof(window.event) != "undefined"? document.body.scrollHeight : document.body.offsetHeight;
+	window.parent.resize_it(iFramCts); //길이를 측정
+});
+//
+-->
+
+function fnChaart(){
+	var statisYy = document.getElementById("statisYy").value;
+	var implSeq = document.getElementById("implSeq").value;
+	var trendDiv = document.getElementById("trendDiv").value;
+	var trendDetail = document.getElementById("trendDetail").value;
+	var maxYy = "2024";
+	var jmCd = "2290";
+	var jmNm = "";
+	
+	if(parseInt(statisYy) > parseInt(maxYy)) {
+		alert("데이터 집계 이전입니다.");
+		return;
+	}
+	
+	var examInstiCd = "";
+	/* 검색솔루선에서 1로보냄 일단 오류방지위해 리셋 */
+	if(examInstiCd == "undefined" ||  examInstiCd == "1"){ 
+		examInstiCd = "";
+	}
+	
+	var url = "crf005.do?id=crf00504s01&gSite=Q&gId="
+			+ "&statisYy=" + statisYy
+			+ "&implSeq=" + implSeq
+			+ "&trendDiv=" + trendDiv
+			+ "&trendDetail=" + trendDetail
+			+ "&examInstiCd=" + examInstiCd
+	+ "&jmCd=" + jmCd
+	+ "&jmNm=" + jmNm;
+	
+	var view  = "chartSearchRs";
+	var view2 = "searchRs";
+	
+	callAjaxView(view, url, "", true, view2, false);
+	chartInfo();
+}
+
+function chartInfo(){
+	var statisYy = document.getElementById("statisYy").value;
+	var implSeq = document.getElementById("implSeq").value;
+	var trendDiv = document.getElementById("trendDiv").value;
+	var trendDetail = document.getElementById("trendDetail").value;
+	var maxYy = "2024";
+	var jmCd = "2290";
+	
+	var url = "crf005.do?id=crf00504s02&gSite=Q&gId="+"&statisYy="+statisYy+"&implSeq="+implSeq+"&trendDiv="+trendDiv+"&trendDetail="+trendDetail + "&jmCd=" + jmCd;
+	var view = "chartSearchRs";
+	
+	callAjaxView(view, url, "", true);
+}
+
+</script>
+					<!-- 수험자동향 -->
+						<b class="headLine3">수험자 동향분석</b>
+						<ul class="txtList dot">
+							<li>실기시험 동향분석은 2013년 부터 조회 가능합니다.</li>
+							<li class="c_Point">Internet Explorer의 경우 서비스에 제한이 있을 수 있습니다. 다른 브라우저를 이용해주세요.</li>
+						</ul>
+						<!-- 검색영역 -->
+						<div class="defaultSearchOptBox typeBtn">
+							<ul class="optList">
+								
+								<!-- 년도 선택 -->
+								<li>
+									<div class="opt">
+										<div class="tit">년도</div>
+										<div class="area">
+											<select class="selectBase" title="년도를 선택하세요" name="statisYy" id="statisYy">
+
+												<option value="2026" >2026</option>
+
+
+												<option value="2025" >2025</option>
+
+
+												<option value="2024" selected>2024</option>
+
+												<option value="2023" >2023</option>
+
+												<option value="2022" >2022</option>
+
+											</select>
+										</div>
+									</div>
+								</li>
+								
+								<!-- 필기/실기 선택 -->
+								<li>
+									<div class="opt">
+										<div class="tit">필기/실기</div>
+										<div class="area">
+											<select class="selectBase" title="필기/실기를 선택하세요" name="implSeq" id="implSeq">
+												<option value="1" selected>필기</option>
+												<option value="2" >실기</option>
+											</select>
+										</div>
+									</div>
+								</li>
+								
+								<!-- 화면 선택 -->
+								<li>
+									<div class="opt">
+										<div class="tit">화면</div>
+										<div class="area">
+											<select class="selectBase" title="화면을 선택하세요" name="trendDiv" id="trendDiv">
+												<option value="01" selected>성별</option>
+											
+												<option value="02" >연령</option>
+												<option value="04" >직업</option>
+												<option value="07" >응시목적</option>
+												<option value="08" >시험준비경로</option>
+												<option value="09" >시험준비기간</option>
+											
+											</select>
+										</div>
+									</div>
+								</li>
+								
+								<!-- 상세보기 선택 -->
+								<li>
+									<div class="opt">
+										<div class="tit">상세보기</div>
+										<div class="area">
+											<select class="selectBase" title="상세보기를 선택하세요" name="trendDetail"  id="trendDetail">
+												<option value="1" selected>전체</option>
+											
+												<option value="2" >응시자</option>
+												<option value="3" >합격자</option>
+											
+											</select>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<div class="btn">
+								<button type="button" class="btnSch" onclick="fnChaart()">검색</button>
+							</div>
+						</div><!-- //defaultSearchOptBox typeBtn -->
+						
+					
+						<div class="chart_warp" id="chartSearchRs">
+							<div class="chart_area" aria-hidden="true">
+								<div id="chart01" class="chart_inner"></div>
+							</div>
+							<script src="/qnet/type/js/highlightchart.js"></script>
+						</div><!-- //chart_warp -->
+						
+						<div class="contTable" id="searchRs"></div>
+						
+						<!--AS-IS(~2024) <div class="objectArea" id="chartdiv"></div> -->
+						<p class="txtAlert">수험자동향 데이터는 원서접수시 수집된 데이터로, 종목별 검정현황 데이터와 다를 수 있음</p>
+	

@@ -1,0 +1,949 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+ 
+
+
+
+
+<style type="text/css"> 
+.tabLayout.type05 {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.tabLayout.type05:before {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px; 
+    background: #216cb2;
+    z-index: 0;
+}
+.tabLayout.type05 ul {
+    position: relative;
+    z-index: 1;
+}
+.tabLayout.type05 ul li {
+    padding: 8px 12px 10px;
+    background-color: #fff;
+    border: 2px solid #216cb2;
+    border-bottom: 1px solid #216cb2;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+}
+.tabLayout.type05 ul li + li {
+    margin-left: 4px;
+}
+.tabLayout.type05 ul li.on {
+    background: transparent;
+    border-bottom: 1px solid #fff;
+}
+
+.tbl_normal td input,
+.tbl_normal td select {
+    width: auto;
+    max-width: 100%;
+}
+</style>
+
+<script type="text/JavaScript"> 
+
+var JMCD = "10453";
+
+$(document).ready(function(){
+// 	$("#minCareerM").attr("disabled",true);
+// 	$("#maxCareerM").attr("disabled",true);
+	$("#minPay").attr("disabled",true);
+	$("#maxPay").attr("disabled",true);
+	
+// searchWorkInfo("");   
+
+/* 	$(".slide_open").show();
+	$(".slide_close").hide();
+*/
+       // 상세검색 열기/닫기
+       $('#showChk').on('click', function () {
+           $(this).toggleClass('on');
+
+           if($(this).hasClass('on')){
+               $('.fullSearchOptBox').addClass('spread');
+   	 		$("#deepSearch").show();
+               $(this).attr('title','상세검색 열림')
+           }else{
+               $('.fullSearchOptBox').removeClass('spread');
+   	 		$("#deepSearch").hide();
+               $(this).attr('title','상세검색 닫혀짐')
+           }
+       }); 
+	
+/* 	//상세검색 열기/닫기
+	$("#showChk").change(function(){
+		if( $( "input:checkbox[name=showChk]").is(":checked") ){
+	 		$(".slide_open").hide();
+	 		$("#deepSearch").show();
+	 		$(".slide_close").show();
+		}else{
+			$(".slide_open").show();
+	 		$("#deepSearch").hide();
+	 		$(".slide_close").hide();
+		}
+		
+	}); */
+	
+	//워크넷 또는 인크루트 체크박스 선택
+	$("#jobTap > span").click(function (){
+		var wrkNeTable = $("#wrkNeTable").html();
+		var includeTable = $("#includeTable").html();
+		
+		if($(this).attr("class") == "worknet"){//워크넷 탭 선택
+			
+// 			if(includeTable != undefined){
+				$("#searchWorkInfo_view").show();
+				$("#includeTable").hide();
+// 			}
+			
+			$("#workOn").addClass("on");
+			$("#inOn").removeClass("on");
+			$("#workOn > a").attr("title","선택됨");
+			$("#inOn > a").removeAttr("title");
+			$("#workNetInfo").show();
+			$("#includeInfo").hide();
+// 			$("#results").show();
+// 			$("#results2").hide();
+			$("#searchWorkInfo_view2").empty();
+			$("#searchWorkInfo_view2").empty();
+			
+		}else if($(this).attr("class") == "include"){//인크루트 탭 선택
+				
+// 			if(wrkNeTable != undefined){
+				$("#searchWorkInfo_view").hide();
+				$("#includeTable").show();
+// 			}
+			
+			$("#inOn").addClass("on");
+			$("#workOn > a").removeAttr("title");
+			$("#inOn > a").attr("title","선택됨");
+			$("#workOn").removeClass("on");
+			$("#includeInfo").show();
+			$("#workNetInfo").hide();
+// 			$("#results2").show();
+// 			$("#results").hide();
+			$("#searchWorkInfo_view").empty();
+			$("#searchWorkInfo_view").empty();
+
+		
+		}
+		
+	});
+	
+		
+	/* (AS-IS ~2024)
+		$("img[name='jobTap']").click(function (){
+		
+		if($(this).attr("id") == "worknet"){
+			$("#searchWorkInfo_view2").empty();
+			$("#searchWorkInfo_view").empty();
+			$("#workOn").addClass("on");
+			$("#inOn").removeClass("on");
+			$("#workNetInfo").show();
+			$("#includeInfo").hide();
+// 			$("#searchWorkInfo_view").append(  "");
+// 			$("#searchWorkInfo_view2").append(  "");
+		}else{
+			$("#searchWorkInfo_view").empty();
+			$("#searchWorkInfo_view2").empty();
+			$("#inOn").addClass("on");
+			$("#workOn").removeClass("on");
+			$("#includeInfo").show();
+			$("#workNetInfo").hide();
+// 			$("#searchWorkInfo_view").append(  "");
+// 			$("#searchWorkInfo_view2").append(  "");
+		}
+		
+	}); */
+	
+	jobTab("tab4",0);
+});
+
+
+function onChangeCtn(pa , name){
+	var thisval =  pa;
+	if(name=="career" || name =="salTp" ){
+		$("input:checkbox[name='"+name+"']:checked").each(function(){
+//	 		testVal +="|"+ $(this).val();
+			 if(thisval != $(this).val()){
+				 $(this).attr("checked" , false);
+			 }
+		});
+		
+		if(name=="career") {
+	// 		if(thisval == "E"){
+	// 			if($("input:checkbox[name='"+name+"']:checked").length ==0    ){
+	// 				$("#minCareerM").val("");
+	// 				$("#maxCareerM").val("");
+	// 				$("#minCareerM").attr("disabled",true);
+	// 				$("#maxCareerM").attr("disabled",true);
+	// 			}else{
+	// 				$("#minCareerM").attr("disabled",false);
+	// 				$("#minCareerM").focus();
+	// 				$("#maxCareerM").attr("disabled",false);
+	// 			}			
+	// 		}else if(thisval == "Z" || thisval == "N"  ){
+	// 			$("#minCareerM").val("");
+	// 			$("#maxCareerM").val("");
+	// 			$("#minCareerM").attr("disabled",true);
+	// 			$("#maxCareerM").attr("disabled",true);
+
+	// 		}	alert($("#career option:selected").val());
+			
+			if(thisval == "E"){
+				$("#minCareerM").val("");
+				$("#maxCareerM").val("");
+				$("#minMaxCareer").show();
+				
+			}else if(thisval == "Z" || thisval == "N" ||  thisval == ""  ){
+				$("#minCareerM").val("");
+				$("#maxCareerM").val("");
+				$("#minMaxCareer").hide();
+			}
+		} else if(name =="salTp") {
+			if($("input:checkbox[name='"+name+"']:checked").length ==0){
+				$("#minPay").val("");
+				$("#maxPay").val("");
+				$("#minPay").attr("disabled",true);
+				$("#maxPay").attr("disabled",true);
+			} else if(thisval == "") {
+				$("#minPay").val("");
+				$("#maxPay").val("");
+				$("#minPay").attr("disabled",true);
+				$("#maxPay").attr("disabled",true);
+			} else {
+				$("#minPay").attr("disabled",false);
+				$("#minPay").focus();
+				$("#maxPay").attr("disabled",false);
+			}
+		}
+	}else{
+		
+	}
+}
+
+
+function searchWorkInfoBtn(){
+	
+	var searchParam = "";
+	
+	// 학력 파라메터 세팅
+// 	$("input:checkbox[name='education']:checked").each(function(index){
+// 		if(index == 0){
+// 			searchParam += "&education="+ $(this).val();
+// 		}else{
+// 			searchParam += "|"+$(this).val();
+// 		}
+// 	});
+	//경력 세팅 
+	var careerChk = "";
+// 	$("input:checkbox[name='career']:checked").each(function(){
+// 		searchParam += "&career="+ $(this).val();
+// 		careerChk  = $(this).val();
+// 	});
+	
+	if($("select[name='career']").val() != ""){
+		searchParam += "&career="+$("select[name='career']").val();
+		careerChk  = $("select[name='career']").val();
+	}	
+	
+	if($("select[name='education']").val() != ""){
+		searchParam += "&education="+$("select[name='education']").val();
+	}	
+	
+	//지역셋팅	
+	if($("select[name='region']").val() != ""){
+		searchParam += "&region="+$("select[name='region']").val();
+	}	
+	
+	if(careerChk == "E"){
+		
+		if($("#minCareerM" ).val() == ""  ||  $("#maxCareerM" ).val() == "" ){
+			alert("경력일 경우 경력개월수를 입력해주세요");
+			return;
+		}else{
+			if(isNaN($("#minCareerM" ).val()) || isNaN($("#maxCareerM" ).val())  ){
+				alert("개월수는 숫자만 가능합니다.");
+				return ;
+			}
+		
+		}
+		searchParam += "&minCareerM="+$("#minCareerM" ).val()+"&maxCareerM="+$("#maxCareerM" ).val();
+	}
+	
+	
+	//if($("input:checkbox[name='deep']:checked").length == 1){ //상세조건일 경우만 세팅
+	if($("#workNetInfo").hasClass("spread")){
+		
+		// 우대조건세팅
+		$("input:checkbox[name='pref']:checked").each(function(index){
+			if(index == 0){
+				searchParam += "&pref="+ $(this).val();
+			}else{
+				searchParam += "|="+ $(this).val();
+			}
+		});
+		
+		//급여 세팅
+		var salTp = "";
+		
+		$("input:checkbox[name='salTp']:checked").each(function(){
+			searchParam += "&salTp="+ $(this).val();
+			salTp  = $(this).val();
+		});
+		
+		if(salTp != ""){
+		
+			if($("#minPay" ).val() == ""  ||  $("#maxPay" ).val() == "" ){
+				alert("임금형태 선택시 금액을 입력해주세요");
+				return;
+			}else{
+				if(isNaN($("#minPay" ).val()) || isNaN($("#maxPay" ).val())  ){
+					alert("금액은 숫자만 가능합니다.");
+					return ;
+				}
+			
+			}
+			searchParam += "&minPay="+$("#minPay" ).val()+"&maxPay="+$("#maxPay" ).val();
+		}
+		
+		$("input:checkbox[name='holidayTp']:checked").each(function(index){
+			if(index == 0){
+				searchParam += "&holidayTp="+ $(this).val();
+			}else{
+				searchParam += "|="+ $(this).val();
+			}
+			
+		});
+		
+		$("input:checkbox[name='workHrCd']:checked").each(function(index){
+			if(index == 0){
+				searchParam += "&workHrCd="+ $(this).val();
+			}else{
+				searchParam += "|="+ $(this).val();
+			}
+			
+		});
+		
+		if($("#keyword" ).val() != ""   ){
+			searchParam  += "&keyword="+$("#keyword" ).val();
+		}
+	
+	}
+// 	searchParam += education;
+	searchWorkInfo(searchParam);
+	
+	
+	updateCnt("1" , "2290" , "");
+}
+
+
+function searchWorkInfoBtn2(){
+	
+	var  searchParam = "";
+	
+	if($("select[name='crr']").val() != ""){ //경력
+		searchParam += "&crr="+$("select[name='crr']").val();
+	}	
+	
+	if($("select[name='schol']").val() != ""){ //학력
+		searchParam += "&schol="+$("select[name='schol']").val();
+	}	
+	
+	if($("select[name='rgn2']").val() != ""){
+		searchParam += "&rgn2="+$("select[name='rgn2']").val();
+	}	
+	
+	if($("#kw" ).val() != ""   ){
+		searchParam  += "&kw="+$("#kw" ).val();
+	}
+	
+
+	
+	searchParam  += "&license=10453";
+	searchWorkInfo2(searchParam);
+	updateCnt("0014" , "2290" , "");
+}
+
+function searchWorkInfo2(param){ //인크루트 일자리 검색
+	var page = 1;
+	var actURL ="/cst015.do?id=cst01503s01&start=0&jmCd=2290"
+	
+//     var 	actURL  = param;
+	if(param != null && param != ""   ){
+		actURL =  "/cst015.do?id=cst01503s01&start=0&jmCd=2290"+param;
+	}else{
+		actURL =  "/cst015.do?id=cst01503s01&start=0&jmCd=2290";
+	}
+	var view	= "searchWorkInfo_view2";
+	callAjaxView(view,actURL,"", true);
+}
+
+
+function searchWorkPage2(url){
+
+	var 	actURL ="/cst015.do?id=cst01503s01&size=10&jmCd="+JMCD+url;
+	var view	= "searchWorkInfo_view2";
+	callAjaxView(view,actURL,"", true); 
+}
+
+//  api조회확인
+function updateCnt(gb , jmCd , company){
+	var jm = "";
+	jm = "2290";
+	
+	callAjax("/crf005.do?id=updateWorkIns&gSite=Q&gId=&gb="+gb+"&jmCd="+jm+"&company="+company ,	
+			null,
+			null,
+			function(xReq, status, error) {},
+			true
+		);
+}
+
+
+function searchWorkPage(url){
+	var 	actURL ="/crf005.do?id=crf00503s08&jmCd=2290"+url;
+	var view	= "searchWorkInfo_view";
+	callAjaxView(view,actURL,"", true);
+}
+
+
+function searchWorkInfo(param){//워크넷 일자리 검색
+	var page = 1;
+	var 	actURL ="/crf005.do?id=crf00503s08&startPage=1&jmCd=2290";
+//     var 	actURL  = param;
+	if(param != null && param != ""   ){
+		actURL =  "/crf005.do?id=crf00503s08&startPage=1&jmCd=2290"+param;
+	}else{
+		actURL =  "/crf005.do?id=crf00503s08&startPage=1&jmCd=2290";
+	}
+	var view	= "searchWorkInfo_view";
+	callAjaxView(view,actURL,"", true);
+}
+
+
+
+
+
+// goProcContentView(url);
+
+
+
+
+
+
+function getWorkDate(){
+	var 	url ="/crf005.do?id=crf00503s04?startPage=2&gSite=Q&gId=";
+	goProcContentView(url);
+};
+
+//20250211 웹접근성으로 인한 탭 사용
+function jobTab(aTabId, idx) {
+	idx = idx==null?0:idx;
+	
+	$("#"+ aTabId +" ul li:eq("+idx+")").addClass("on");
+	$("#"+ aTabId +" ul li a").eq(idx).attr("title",$("#"+ aTabId +" ul li a").eq(idx).find("span").text().trim()+" 선택됌");//2015-06-11 KJH 접근성 위한 title 추가
+	$("#"+ aTabId +" ul li a").click(function (e) {
+		$("#"+ aTabId +" ul li a").each(function () {
+			if ($(this).parent('li').hasClass("on")) {
+				$(this).parent('li').removeClass("on");
+			}
+		});
+		
+		if($(this).parent('li').find("span").attr("class") == "worknet") {
+			$("#searchWorkInfo_view").show();
+			$("#includeTable").hide();
+			$("#workNetInfo").show();
+			$("#includeInfo").hide();
+			$("#searchWorkInfo_view2").empty();
+			$("#searchWorkInfo_view2").empty();
+		} else if($(this).parent('li').find("span").attr("class") == "include") {
+
+			$("#searchWorkInfo_view").hide();
+			$("#includeTable").show();
+			$("#includeInfo").show();
+			$("#workNetInfo").hide();
+			$("#searchWorkInfo_view").empty();
+			$("#searchWorkInfo_view").empty();
+		}
+		
+		$(this).parent('li').addClass("on");
+		//2015-06-11 KJH 접근성 위한 title 추가
+		$("#"+ aTabId +" ul li a").attr("title","");
+		$(this).attr("title",$(this).text().trim()+" 선택됌");
+	});
+}
+</script>
+
+				<!-- 일자리정보 -->
+				<div class="contTab on" >
+					
+					<div class="roundTab" id="tab4" role="tabEl">
+						<ul class="tabList"> 
+							<li id="workOn" class="on">
+								<a href="#none"  id="jobTap">
+									<span class="worknet">워크넷</span>
+								</a>
+							</li>
+							<li id="inOn" class="">
+								<a href="#none" id="jobTap" >
+									<span class="include">인크루트</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					
+					<!-- ##############################  워크넷  ############################## -->
+					<div class="fullSearchOptBox" id="workNetInfo">
+					
+						<ul class="optList">
+							<li class="typeDetail">
+								<div class="opt">
+									<div class="area typeDevide">
+									
+										<div class="area_s">
+											<b class="tit">경력선택</b>
+											<div class="area">
+												<select class="selectBase" id="career" name="career" onchange="onChangeCtn(this.value , 'career' )" title="경력을 선택하세요">
+													<option value="">전체 </option>
+													<option value="Z">관계없음 </option>
+													<option value="N">신입</option>
+													<option value="E">경력 </option>
+												</select>
+											</div>
+										</div>
+										
+										<div class="area_s">
+											<b class="tit">학력선택</b>
+											<div class="area">
+												<span class="txt_add">
+													<select class="selectBase" id="education" name="education" onchange="onChangeCtn(this.value , 'education' )" title="학력을 선택하세요">
+														<option value="">전체 </option>
+														<option value="01">초촐이하 </option>
+														<option value="02">중졸</option>
+														<option value="03">고졸</option>	
+														<option value="04">대졸(2~3년) </option>
+														<option value="05">대졸(4년)</option>
+														<option value="06">석사  </option>	
+														<option value="07">박사 </option>	
+													</select>
+												</span> 
+											</div>
+										</div>
+										
+										<div class="area_s">
+											<b class="tit">지역선택</b>
+											<div class="area">
+												<span class="txt_add">
+													<select class="selectBase"id="region" name="region" title="지역을 선택하세요">
+														<option value="">전체</option>
+														<option value="00000">지역무관</option>
+														<option value="11000">서울</option> 
+														<option value="26000">부산</option>
+														<option value="27000">대구</option>
+														<option value="28000">인천</option>
+														<option value="29000">광주</option>
+														<option value="30000">대전</option>
+														<option value="31000">울산</option>
+														<option value="36110">세종</option>
+														<option value="41000">경기</option>
+														<option value="51000">강원</option>
+														<option value="43000">충북</option>
+														<option value="44000">충남</option>
+														<option value="52000">전북</option>
+														<option value="46000">전남</option>
+														<option value="47000">경북</option>
+														<option value="48000">경남</option>
+														<option value="50000">제주</option>
+													</select>
+												</span>
+											</div>
+										</div>
+										
+									</div><!-- //area typeDevide -->
+									<button type="button" id="showChk" class="btnDetail" title="상세조건 열기"><span>상세조건</span></button>
+									<!-- <input type="checkbox"  id="showChk" name="showChk"/><label for="showChk">상세조건</label> -->
+								</div><!-- //opt 경력, 학력, 지역 선택 -->
+								
+								<div class="areaPrice mT10" id="minMaxCareer" style="display: none;">
+									<div class="price">
+										<input type="text" class="inputBase" id="minCareerM" name="minCareerM" title="경력최소개월을 입력하세요" maxlength="3"/>
+									</div>
+									<span>(최소경력) ~ </span>
+									<div class="price">
+										 <input type="text" class="inputBase" id="maxCareerM" name="maxCareerM" value="" title="경력최대개월을 입력하세요" maxlength="3"/>
+									</div>
+									<span>(최대경력)</span>  
+									<span>(경력의 경우 반드시 경력최소개월, 최대개월 입력)</span>
+								</div>
+							</li>
+							<li>
+								<div class="opt" id="deepSearch" style="display: none;"><!-- 				<p class="txt_right mb10"><strong> 조건검색시 더 많은 정보를 확인하실 수 있습니다.</strong></p> -->
+									
+		<!-- 								<col width="10%" /> -->
+		<!-- 								<col width="*" /> -->
+		
+			<!-- 							<tr> -->
+			<!-- 								<td colspan="5" scope="row" style="border-width:0px;padding-top:0px;padding-bottom:0px;"><h5>조건검색</h5></td> -->
+			<!-- 							</tr> -->
+											
+<!-- 										<tr>										 -->
+<!-- 											<th scope="row"><label for="engNm">URL 확인(테스트용)</label></th> -->
+<!-- 											<td colspan="2"> -->
+<!-- 												<span class="txt_add" id="urlCheck">  -->
+<!-- 												</span>  -->
+<!-- 											</td> -->
+<!-- 										</tr>		 -->
+<!-- 										<tr> -->
+											
+<!-- 											<th scope="row"><label for="engNm">건수 확인(테스트용)</label></th> -->
+<!-- 											<td colspan="2"> -->
+<!-- 												<span class="txt_add" id="totCount">  -->
+<!-- 													</span>  -->
+<!-- 											</td> -->
+<!-- 										</tr>								 -->
+<!-- 										<tr> -->
+											
+<!-- 											<th scope="row"><label for="engNm">검색된<br/> 관련자격</label></th> -->
+<!-- 											<td colspan="2"> -->
+<!-- 												<span class="txt_add" id="comCdNm">  -->
+<!-- 													</span>  -->
+<!-- 											</td> -->
+<!-- 										</tr>	 -->
+										
+										
+																		
+			<!-- 							<tr>								 -->
+			<!-- 								<th scope="row"><label for="engNm">경력여부선택</label></th> -->
+			<!-- 								<td colspan="2"> -->
+			<!-- 									<span class="txt_add">  -->
+			<!-- <!-- 									    <input type="checkbox" id="career"  name="career" value="Z"   onchange="onChangeCtn(this.value , 'career' )"  />관계없음 --> 
+			<!-- 									   <input type="checkbox" id="career"  name="career" value="Z"   onchange="onChangeCtn(this.value , 'career' )"  />관계없음 -->
+			<!-- 									   <input type="checkbox" id="career"  name="career"  value="N"  onchange="onChangeCtn(this.value , 'career' )"  />  신입 -->
+			<!-- 									   <input type="checkbox" id="career"  name="career"  value="E"  onchange="onChangeCtn(this.value , 'career' )"  />  경력 -->
+			<!-- 									  <input type="text"   id="minCareerM"  name="minCareerM"     />(최소개월)  ~   <input type="text"   id="maxCareerM"  name="maxCareerM"  value=""   />(최대개월)  -->
+			<!-- 									  <br/> (경력의 경우 반드시 경력최소개월, 경력최대개월수 입력) -->
+			<!-- 										</span>  -->
+			<!-- 								</td> -->
+			<!-- 							</tr>		 -->
+			<!-- 							<tr> -->
+			<!-- 								<th scope="row"><label for="engNm">학력</label></th> -->
+			<!-- 									<td colspan="2"> -->
+			<!-- 										<span class="txt_add"> -->
+			<!-- 												<input type="checkbox" id="education"  name="education"  value="01"  onchange="onChangeCtn(this.value , 'education' )" />초촐이하 -->
+			<!-- 												<input type="checkbox" id="education"  name="education"  value="02"  onchange="onChangeCtn(this.value , 'education' )"   />중졸 -->
+			<!-- 												<input type="checkbox" id="education"  name="education"   value="03" onchange="onChangeCtn(this.value , 'education' )"   />고졸 -->
+			<!-- 												<input type="checkbox" id="education"  name="education"  value="04"  onchange="onChangeCtn(this.value , 'education' )"   />대졸(2~3년) -->
+			<!-- 												<input type="checkbox" id="education"  name="education"   value="05"  onchange="onChangeCtn(this.value , 'education' )"  />대졸(4년) -->
+			<!-- 												<input type="checkbox" id="education"  name="education"  value="06"   onchange="onChangeCtn(this.value , 'education' )"  />석사 -->
+			<!-- 												<input type="checkbox" id="education"  name="education"  value="07"  onchange="onChangeCtn(this.value , 'education' )"   />박사 -->
+															
+			<!-- 										 </span> -->
+			<!-- 									</td> -->
+			<!-- 							</tr>		 -->
+			<!-- 							<tr> -->
+			<!-- 								<th scope="row"><label for="engNm">지역</label></th> -->
+			<!-- 									<td colspan="2"> -->
+			<!-- 										<span class="txt_add"> -->
+			<!-- 												<select id="region" name="region"> -->
+			<!-- 													<option value="">선택하세요</option> -->
+			<!-- 													<option value="00000">지역무관</option> -->
+			<!-- 													<option value="11000">서울</option> -->
+			<!-- 													<option value="26000">부산</option> -->
+			<!-- 													<option value="27000">대구</option> -->
+			<!-- 													<option value="28000">인천</option> -->
+			<!-- 													<option value="29000">광주</option> -->
+			<!-- 													<option value="30000">대전</option> -->
+			<!-- 													<option value="31000">울산</option> -->
+			<!-- 													<option value="36110">세종</option> -->
+			<!-- 													<option value="41000">경기</option> -->
+			<!-- 													<option value="42000">강원</option> -->
+			<!-- 													<option value="43000">충북</option> -->
+			<!-- 													<option value="44000">충남</option> -->
+			<!-- 													<option value="45000">전북</option> -->
+			<!-- 													<option value="46000">전남</option> -->
+			<!-- 													<option value="47000">경북</option> -->
+			<!-- 													<option value="48000">경남</option> -->
+			<!-- 													<option value="50000">제주</option> -->
+			<!-- 												</select> -->																				
+			<!-- 										 </span> -->
+			<!-- 									</td> -->
+			<!-- 							</tr>	 -->
+									<div class="tit">임금형태</div>
+									
+									<div class="area labelList hasInput">
+										<label class="inputBox">
+											<input type="checkbox" id="salTp_1"  name="salTp"  value=""  onchange="onChangeCtn(this.value , 'salTp' )" />
+											<span class="data">관계없음</span>	
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="salTp_2"  name="salTp"  value="D"  onchange="onChangeCtn(this.value , 'salTp' )" />
+											<span class="data">일급</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="salTp_3"  name="salTp"  value="H"  onchange="onChangeCtn(this.value , 'salTp' )" />
+											<span class="data">시급</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="salTp_4"  name="salTp"  value="M"  onchange="onChangeCtn(this.value , 'salTp' )" />
+											<span class="data">월급</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="salTp_5"  name="salTp"  value="Y"  onchange="onChangeCtn(this.value , 'salTp' )" />
+											<span class="data">연봉</span>
+										</label>
+										<div class="areaPrice mL0">
+											<div class="price">
+												<input type="text" class="inputBase" id="minPay" name="minPay" title="최소금액을 입력하세요"/>
+											</div>
+											<span>(최소금액) ~ </span> 
+											<div class="price">
+												<input type="text" class="inputBase" id="maxPay"  name="maxPay" value="" title="최대금액을 입력하세요"/>
+											</div>
+											<span>(최대금액)</span>  
+										</div>
+									</div><!-- //area labelList hasInput -->
+								</div><!-- //opt 임금형태 -->
+							</li>
+							<li>
+								<div class="opt">
+									<div class="tit">근무형태</div>
+									<div class="area labelList">
+										<label class="inputBox">
+											<input type="checkbox" id="holidayTp_1"  name="holidayTp"  value="1"  onchange="onChangeCtn(this.value , 'holidayTp' )" />
+											<span class="data">주 5일 근무</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="holidayTp_2"  name="holidayTp"  value="2"  onchange="onChangeCtn(this.value , 'holidayTp' )" />
+											<span class="data">주 6일 근무</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="holidayTp_3"  name="holidayTp"  value="3"  onchange="onChangeCtn(this.value , 'holidayTp' )" />
+											<span class="data">토요 격주 휴무</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="holidayTp_4"  name="holidayTp"  value="9"  onchange="onChangeCtn(this.value , 'holidayTp' )" />
+											<span class="data">기타</span>
+										</label>
+									</div><!-- //area labelList -->
+								</div><!-- //opt 근무형태 -->
+							</li>
+							<li>
+								<div class="opt">
+									<div class="tit">근무시간</div>
+									<div class="area labelList">
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_1"  name="workHrCd"  value="1"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">오전(6:00~12:00) </span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_2"  name="workHrCd"  value="2"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">오후(12:00~18:00)</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_3"  name="workHrCd"  value="3"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">저녁(18:00~24:00)</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_4"  name="workHrCd"  value="4"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">새벽(00:00~06:00)</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_5"  name="workHrCd"  value="5"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">오전~오후</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_6"  name="workHrCd"  value="6"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">오후~저녁</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_7"  name="workHrCd"  value="7"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">저녁~새벽</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_8"  name="workHrCd"  value="8"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">새벽~오전</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_9"  name="workHrCd"  value="9"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">종일 근무(9:00~18:00)</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="workHrCd_10"  name="workHrCd"  value="99"  onchange="onChangeCtn(this.value , 'workHrCd' )" />
+											<span class="data">시간협의/무관</span>
+										</label>
+									</div><!-- //area labelList -->
+								</div><!-- //opt 근무시간 -->
+							</li>
+							<li>
+								<div class="opt">
+									<div class="tit">우대사항</div>
+									<div class="area labelList">
+										<label class="inputBox">
+											<input type="checkbox" id="pref_1"  name="pref"  value="12"  onchange="onChangeCtn(this.value , 'pref' )" />
+											<span class="data">여성</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="pref_2"  name="pref"  value="13"  onchange="onChangeCtn(this.value , 'pref' )" />
+											<span class="data">청년층	</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="pref_3"  name="pref"  value="Y"  onchange="onChangeCtn(this.value , 'pref' )" />
+											<span class="data">장애인 병행채용</span>																	
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="pref_4"  name="pref"  value="S"  onchange="onChangeCtn(this.value , 'pref' )" />
+											<span class="data">장애인 우대</span>	
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="pref_5"  name="pref"  value="D"  onchange="onChangeCtn(this.value , 'pref' )" />
+											<span class="data">장애인만 채용</span>
+										</label>
+										<label class="inputBox">
+											<input type="checkbox" id="pref_6"  name="pref"  value="B"   onchange="onChangeCtn(this.value , 'pref' )" />
+											<span class="data">고령자</span>
+										</label>
+									</div><!-- //area labelList -->
+								</div><!-- //opt 우대사항 -->
+							</li>
+							<li>
+								<div class="opt">
+									<div class="tit">키워드검색</div>
+									
+									<div class="area labelList">
+										<input type="text" class="inputBase" id="keyword"  name="keyword"  value=""  title="키워드를 입력하세요" placeholder="(예)전략영업, 개발자, ERP, 월급, 강남, 주5일">
+									</div>
+								</div><!-- //opt-->
+							</li>
+						</ul><!-- //optList 워크넷-->
+						
+						<div class="btnArea">
+							<button type="button" class="baseBtn" onclick="searchWorkInfoBtn();">
+								<span class="base">조회</span>
+							</button>
+						</div>
+						
+					</div><!-- //fullSearchOptBox 워크넷 -->
+							
+					<!-- ##############################  인크루트  ############################## -->
+					<div class="fullSearchOptBox"  id="includeInfo" style="display: none;">
+						<!-- <div class="cont_parbx">
+							<p class="list">인크루트에서 제공하는 일자리 정보를 확인 하실 수 있습니다.</p>
+							<p class="list">해당 자격에 맞는 일자리 정보를 확인하 실 수 있습니다.  </p>
+						</div> -->
+						
+						<ul class="optList">
+							<li class="typeDetail noBtn">
+								<div class="opt">
+									<div class="area typeDevide">
+									
+										<div class="area_s">
+											<b class="tit">경력선택</b>
+											<div class="area">
+												<select class="selectBase" id="crr" name="crr" onchange="onChangeCtn(this.value , 'career' )" title="경력을 선택하세요">
+													<option value="99">연차무관</option>
+													<option value="3"> ~2년 미만</option>
+													<option value="4">2~3년</option>
+													<option value="5">3~5년</option>	
+													<option value="6">5~10년</option>
+													<option value="7">10년이상</option>
+												</select>
+<!-- 										<span id="minMaxCareer" style="display: none;"> -->
+<!-- 												<input type="text"   id="minCareerM"  name="minCareerM"   style="width: 20px"  maxlength="3"  /> 년 이상  -->
+<!-- 												<input type="text"   id="maxCareerM"  name="maxCareerM"   style="width: 20px"  maxlength="3"  /> 년 이하 -->
+<!-- 												(경력의 년단위 정수만 입력가능 예 )  -->
+<!-- 										</span>	   -->
+											</div>
+										</div>
+										<div class="area_s">
+											<b class="tit">학력선택</b>
+											<div class="area">
+												<select class="selectBase" id="schol" name="schol" title="학력을 선택하세요">
+													<option value="99">학력무관  </option>
+													<option value="40">고등학교 졸업</option>
+													<option value="50">대졸(2~3년년제) 졸업 </option>
+													<option value="60">대졸(4년제) 졸업</option>
+													<option value="70">석사졸업  </option>	
+													<option value="80">박사졸업 </option>
+												</select>
+											</div>
+										</div>
+										<div class="area_s">
+											<b class="tit">지역선택</b>
+											<div class="area">
+												<select class="selectBase" id="rgn2" name="rgn2" title="지역을 선택하세요">
+													<option value="59">전국</option>
+													<option value="11 ">서울특별시</option>
+													<option value="12 ">부산광역시</option>
+													<option value="14 ">인천광역시</option>
+													<option value="16 ">대전광역시</option>
+													<option value="15">광주광역시</option>
+													<option value="13">대구광역시</option>
+													<option value="17">울산광역시</option>
+													<option value="27">세종특별자치시</option>
+													<option value="18">경기도</option>
+													<option value="19">강원도</option>
+													<option value="20">충청북도</option>
+													<option value="21">충청남도</option>
+													<option value="22">전라북도</option>
+													<option value="23">전라남도</option>
+													<option value="24">경상북도</option>
+													<option value="25">경상남도</option>
+													<option value="26">제주특별자치도</option>
+												</select>
+											</div>
+										</div>
+									</div><!-- //area typeDevide -->
+								</div><!-- //opt -->
+							</li>
+							<li>
+								<div class="opt">
+									<div class="tit">키워드검색</div>
+									
+									<div class="area labelList">
+										<input type="text" class="inputBase" id="kw"  name="kw"  value="" title="키워드를 입력하세요" placeholder="(예)기업명, 공고명, 지역, 지하철… 등등"/>
+									</div>
+								</div>
+							</li>
+						</ul><!-- //optList 인크루트 -->
+						
+						<div class="btnArea">
+							<button type="button" class="baseBtn" onclick="searchWorkInfoBtn2();">
+								<span class="base">조회</span>
+							</button>
+						</div>
+						
+					</div><!-- //fullSearchOptBox 인크루트 -->
+					<div id="searchWorkInfo_view2"></div>
+					<div id="searchWorkInfo_view"></div>
+					
+				</div><!-- //"contTab on"-->
