@@ -1,6 +1,6 @@
 from datetime import datetime
 from .utils_text import _prune
-from .utils_date import _parse_md_range, _parse_one_date, _split_time_range, _minutes_ko
+from .utils_date import _parse_md_range, _parse_one_date, _split_time_ranges, _minutes_ko
 
 def normalize_schedule(raw: dict, base_year: int | None = None) -> dict:
     """
@@ -20,6 +20,7 @@ def normalize_schedule(raw: dict, base_year: int | None = None) -> dict:
         or raw.get("시험일정", {})
         or {}
     )
+    #, 쉼표가 없으므로 그냥 그 값 그대로 가는 것이다 즉 딕셔너리로 쓰는 것
 
     rounds_in = sched_root.get("정기검정일정") or []
     times_in  = (sched_root.get("시험시간")
@@ -64,7 +65,7 @@ def normalize_schedule(raw: dict, base_year: int | None = None) -> dict:
     times = []
     for t in times_in:
         show_time = t.get("시험시간표시") or t.get("시험시간")
-        start, end = _split_time_range(show_time or "")
+        start, end = _split_time_ranges(show_time or "")
         times.append(_prune({
             "등급": t.get("등급"),
             "차수": t.get("차수"),
