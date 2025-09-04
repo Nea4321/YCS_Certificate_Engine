@@ -2,8 +2,8 @@ from __future__ import annotations
 import re
 from datetime import datetime, date
 from typing import Any, Dict, Iterable, Tuple, Optional, List
-from .utils_text import _prune
-from .utils_date import _parse_md_range, _parse_one_date, _split_time_range, _minutes_ko
+from engine_common.utils_text import _prune
+from engine_common.utils_date import _parse_md_range, _parse_one_date, _split_time_range, _minutes_ko
 
 # ---------- 공용 헬퍼 ----------
 def _first(src: Dict[str, Any], *keys: Iterable[str]) -> Any:

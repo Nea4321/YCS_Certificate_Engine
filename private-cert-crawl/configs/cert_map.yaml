@@ -2,90 +2,102 @@
 certifications:
   digital_information:
     tabs:
-      - name: syllabus
-        runner: "digital_information.tabs.syllabus:get_data"
-        normalizer: "digital_information.normalizers:normalize_content"
-        target: "시험내용"
-      - name: exam_schedule
-        runner: "digital_information.tabs.exam_schedule:get_data"
-        normalizer: "digital_information.normalizers:normalize_schedule"
-        target: "시험일정"
+    - name: exam_schedule
+      runner: "digital_information.tabs.exam_schedule:get_data"
+      normalizer: "digital_information.normalizers.schedule:normalize_schedule"
+      target: "시험일정"
+    - name: syllabus
+      runner: "digital_information.tabs.syllabus:get_data"
+      normalizer: "digital_information.normalizers.content:normalize_content"
+      target: "시험내용"
 
   linux_master:
     tabs:
       - name: exam_schedule
         runner: "linux_master.tabs.exam_schedule:get_data"
-        normalizer: "linux_master.normalizers:normalize_schedule"
+        normalizer: "linux_master.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "linux_master.tabs.syllabus:get_data"
-        normalizer: "linux_master.normalizers:normalize_content"
+        normalizer: "linux_master.normalizers.content:normalize_content"
         target: "시험내용"
 
   coding_ability:
     tabs:
       - name: exam_schedule
         runner: "coding_ability.tabs.exam_schedule:get_data"
-        normalizer: "coding_ability.normalizers:normalize_schedule"
+        normalizer: "coding_ability.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "coding_ability.tabs.syllabus:get_data"
-        normalizer: "coding_ability.normalizers:normalize_content"
+        normalizer: "coding_ability.normalizers.content:normalize_content"
         target: "시험내용"
 
   Computerized_tax_accounting:
     tabs:
       - name: exam_schedule
         runner: "Computerized_tax_accounting.tabs.exam_schedule:get_data"
-        normalizer: "Computerized_tax_accounting.normalizers:normalize_schedule"
+        normalizer: "Computerized_tax_accounting.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "Computerized_tax_accounting.tabs.syllabus:get_data"
-        normalizer: "Computerized_tax_accounting.normalizers:normalize_content"
+        normalizer: "Computerized_tax_accounting.normalizers.content:normalize_content"
         target: "시험내용"
 
   barista:
     tabs:
       - name: exam_schedule
         runner: "barista.tabs.exam_schedule:get_data"
-        normalizer: "barista.normalizers:normalize_schedule"
+        normalizer: "barista.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "barista.tabs.syllabus:get_data"
-        normalizer: "barista.normalizers:normalize_content"
+        normalizer: "barista.normalizers.content:normalize_content"
         target: "시험내용"
 
   CS_Leaders:
     tabs:
       - name: exam_schedule
         runner: "CS_Leaders.tabs.exam_schedule:get_data"
-        normalizer: "CS_Leaders.normalizers:normalize_schedule"
+        normalizer: "CS_Leaders.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "CS_Leaders.tabs.syllabus:get_data"
-        normalizer: "CS_Leaders.normalizers:normalize_content"
+        normalizer: "CS_Leaders.normalizers.content:normalize_content"
         target: "시험내용"
 
   gtq:
     tabs:
       - name: exam_schedule
         runner: "gtq.tabs.exam_schedule:get_data"
-        normalizer: "gtq.normalizers:normalize_schedule"
+        normalizer: "gtq.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "gtq.tabs.syllabus:get_data"
-        normalizer: "gtq.normalizers:normalize_content"
+        normalizer: "gtq.normalizers.content:normalize_content"
         target: "시험내용"
 
   erp_information:
     tabs:
       - name: exam_schedule
         runner: "erp_information.tabs.exam_schedule:get_data"
-        normalizer: "erp_information.normalizers:normalize_schedule"
+        normalizer: "erp_information.normalizers.schedule:normalize_schedule"
         target: "시험일정"
       - name: syllabus
         runner: "erp_information.tabs.syllabus:get_data"
-        normalizer: "erp_information.normalizers:normalize_content"
-        target: "시험내용"                             
+        normalizer: "erp_information.normalizers.content:normalize_content"
+        target: "시험내용"
+
+  itq:
+    tabs:
+      - name: exam_schedule
+        runner: "itq.tabs.exam_schedule:get_data"
+        normalizer: "itq.normalizers.schedule:normalize_schedule"
+        target: "시험일정"
+      - name: syllabus
+        runner: "itq.tabs.syllabus:get_data"
+        normalizer: "itq.normalizers.content:normalize_content"
+        target: "시험내용"
+
   
                   

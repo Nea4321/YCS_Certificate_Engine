@@ -1,6 +1,6 @@
 from datetime import datetime
-from .utils_text import _prune
-from .utils_date import _parse_md_range, _parse_one_date, _split_time_range, _minutes_ko
+from engine_common.utils_text import _prune
+from engine_common.utils_date import _parse_md_range, _parse_one_date, _split_time_range, _minutes_ko
 
 def normalize_schedule(raw: dict, base_year: int | None = None) -> dict:
     """
@@ -76,4 +76,4 @@ def normalize_schedule(raw: dict, base_year: int | None = None) -> dict:
             "durationMin": _minutes_ko(show_time) or _minutes_ko(t.get("소요시간")),
         }))
 
-    return _prune({"정기검정일정": rounds})
+    return _prune({"정기검정일정": rounds, "시험시간": times,})

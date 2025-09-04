@@ -1,7 +1,7 @@
 # gtq/normalizers/schedule.py
 from __future__ import annotations
 from typing import Dict, Any, List, Tuple, Optional
-from .utils_text import _prune
+from engine_common.utils_text import _prune
 
 # ───────────────────────────────── helpers ───────────────────────────────── #
 

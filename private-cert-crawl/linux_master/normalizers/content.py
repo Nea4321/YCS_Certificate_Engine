@@ -1,5 +1,5 @@
-from .utils_text import _as_list, _is_nonempty, _coerce_images, _prune
-from .utils_dedupe import (
+from engine_common.utils_text import _as_list, _is_nonempty, _coerce_images, _prune
+from engine_common.utils_dedupe import (
     _parse_weights, _looks_like_coverage,
     _signature_syllabus, _signature_coverage, _dedupe_by_signature
 )
