@@ -9,7 +9,7 @@ from typing import Iterable, Optional
 ROOT = Path(__file__).parent
 # 패키지 경로 추가: 루트에서 실행해도 private/public 모듈 임포트 가능
 sys.path.insert(0, str(ROOT / "private-cert-crawl"))
-sys.path.insert(0, str(ROOT / "public-cert-api"))
+sys.path.insert(0, str(ROOT / "public_cert_api"))
 
 from schemas.v1 import RootV1, MetaV1  # Engine/schemas 에 있어야 함
 

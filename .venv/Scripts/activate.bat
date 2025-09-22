@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=D:\Crawling\Certificate\YCS_Certificate_Engine\private-cert-crawl\.venv
+set VIRTUAL_ENV=C:\cert-data\Crawling\Certificate\Engine\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

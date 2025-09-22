@@ -1,0 +1,56 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.log
+# IDE 기본은 무시
+.idea/
+.vscode/
+
+# VS Code에서 꼭 공유할 파일만 허용
+!.vscode/extensions.json
+!.vscode/settings.json
+
+
+# 패키징/빌드 산출물
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ===== 가상환경 =====
+.venv*/
+venv*/
+ENV*/
+.envrc
+
+# ===== 비밀/로컬 설정(꼭 제외) =====
+.env
+*.env
+.env.*            # ex) .env.local
+certs.csv         # DB에서 export한 매핑(내부 데이터)
+targets.txt       # 로컬 배치용 리스트 파일(있다면)
+qa_report*        # 로컬 점검 결과물
+bad_jmcd          # 로컬 점검 리스트
+
+# ===== Selenium/크롤링 산출물(재생성 가능) =====
+*.html
+*.html.gz
+screenshots/
+outputs/
+tmp/
+logs/
+_errors/
+_logs/
+
+# ===== 테스트/커버리지 =====
+.pytest_cache/
+.coverage
+coverage.xml
+
+# ===== OS/IDE =====
+.DS_Store
+Thumbs.db
+*.iml

@@ -1,8 +1,0 @@
-selenium>=4.21
-beautifulsoup4>=4.12
-lxml>=5.2
-requests>=2.32
-urllib3>=2.2
-pyyaml
-pydantic>=2,<3
-

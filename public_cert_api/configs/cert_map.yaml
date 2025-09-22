@@ -1,0 +1,17 @@
+certifications:
+  chansol_api:
+    tabs:
+      - name: basic_info
+        runner: public_cert_api.snapshot.qnet:read_basic
+        normalizer: public_cert_api.normalizers.basic_info:normalize
+        target: "기본정보"
+
+      - name: exam_info
+        runner: public_cert_api.snapshot.qnet:read_exam
+        normalizer: public_cert_api.normalizers.exam_info:normalize
+        target: "시험정보"
+
+      - name: preference
+        runner: public_cert_api.snapshot.qnet:read_preference
+        normalizer: public_cert_api.normalizers.preference:normalize
+        target: "우대현황"
