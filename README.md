@@ -105,15 +105,16 @@ python -m public_cert_api.run_public `
 > **중요**: `.env`는 절대 커밋하지 않습니다.
 
 ```
-# PostgreSQL 예시
-DB_HOST=aws-0-ap-northeast-2.pooler.supabase.com
-DB_PORT=6543
-DB_NAME=postgres
-DB_USERNAME=my_user
-DB_PASSWORD=*****
+# .env.example  (이 파일만 공개 저장소에 커밋)
+DB_HOST=your-db-host.example.com
+DB_PORT=your_port
+DB_NAME=your_db_name
+DB_USERNAME=your_db_user
+DB_PASSWORD=your_secure_password
 
-# (선택) 한 줄짜리 URL을 쓰고 싶다면
+# (선택) 한 줄 URL로 쓰고 싶다면
 # DB_URL=jdbc:postgresql://HOST:PORT/DBNAME
+
 ```
 
 ### B. CSV 내보내기
