@@ -34,12 +34,13 @@ certs.csv         # DB에서 export한 매핑(내부 데이터)
 targets.txt       # 로컬 배치용 리스트 파일(있다면)
 qa_report*        # 로컬 점검 결과물
 bad_jmcd          # 로컬 점검 리스트
+org_map.csv
 
 # ===== Selenium/크롤링 산출물(재생성 가능) =====
 *.html
 *.html.gz
 screenshots/
-outputs/
+out/
 tmp/
 logs/
 _errors/

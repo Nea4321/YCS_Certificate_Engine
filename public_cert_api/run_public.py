@@ -7,6 +7,7 @@ import json
 from .normalizers.v1_core.build_trace import build_norm_with_trace
 # run_public.py 상단
 import csv
+import os
 
 def load_idmap(csv_path: str) -> dict[str, dict]:
     if not csv_path: return {}
@@ -156,6 +157,14 @@ def main():
     ap.add_argument("--name", default="seed", help="태그/로그용 이름(선택)")
     ap.add_argument("--display-name", help="한글 표시명(파일 _meta.name 패치용)")
     ap.add_argument("--csv", help="certificate_id/jmcd 매핑 CSV 경로")
+    ap.add_argument("--frame-mode", choices=["off", "selenium"], default="off",
+                help="fetch 단계에서 iframe 본문 저장 방식")
+    ap.add_argument("--prewarm", action="store_true",
+                help="fetch 전에 세션 예열 1회")
+    ap.add_argument("--cookies", help="Netscape 포맷 cookies.txt 경로")
+    # 선택: 쿠키 로그 on/off (환경변수 대신 플래그로)
+    ap.add_argument("--cookie_log", action="store_true",
+                help="쿠키 적재/전송 정보 로그 출력")
     args = ap.parse_args()
 
 
@@ -202,8 +211,17 @@ def main():
             elif not should(have_htmls):
                 print("[skip] fetch (resume)")
             else:
-                run([sys.executable, "-m", "public_cert_api.fetch_qnet_tabs_min", "--jmcd", jmcd, "--out", str(root)])
-                have_htmls = exists_htmls(jm_root)
+                cmd = [sys.executable, "-m", "public_cert_api.fetch_qnet_tabs_min",
+               "--jmcd", jmcd, "--out", str(root), "--frame-mode", args.frame_mode]
+                if args.prewarm:
+                   cmd += ["--prewarm"]
+                if args.cookies:
+                   cmd += ["--cookies", args.cookies]
+                if args.cookie_log:
+                   # 런 직전에 env로 넘겨도 되고, fetch 쪽이 플래그를 읽게 했으면 그대로 둠
+                   os.environ["FETCH_COOKIE_LOG"] = "1"
+                   run(cmd)
+                   have_htmls = exists_htmls(jm_root)
         else:
             print("[skip] fetch (steps)")
 

@@ -19,6 +19,7 @@ def _to_rx(words):
 def _load_yaml():
     try:
         cfg_path = pkg_files("public_cert_api.normalizers.v1_core.configs") / "schedule_headers.yaml"
+        print("[CFG] from", cfg_path)
         with cfg_path.open("r", encoding="utf-8") as f:
             return yaml.safe_load(f)
     except Exception:

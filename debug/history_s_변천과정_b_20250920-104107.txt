@@ -1,4 +1,0 @@
-[keyword] (?:^|\s)변천과정\b
-[total lines] 84
-
-<< NO MATCH >>

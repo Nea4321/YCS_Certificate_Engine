@@ -1,4 +1,0 @@
-[keyword] (진로\s*및\s*전망|진로및전망)
-[total lines] 78
-
-<< NO MATCH >>

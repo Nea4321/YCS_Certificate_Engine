@@ -69,6 +69,12 @@ python -m public_cert_api.run_public `
   --display-name "정보처리기사"
 ```
 
+$BASE = Resolve-Path ..\..\..  
+$ROOT = Join-Path $BASE 'chansol_api'  
+$CSV  = Join-Path $BASE 'certs.csv'      
+python -m public_cert_api.run_public  --root "$ROOT"   --csv  "$CSV"  --jmcd 0080   --mode snapshot   --steps normalize   --force
+자격증 id까지 더 쓰고 싶을 땐 이렇게 씁니다.
+
 ### E. 여러 종목 일괄 실행
 `targets.txt`에 JMCD를 한 줄에 하나씩 넣고 실행합니다.
 ```text
