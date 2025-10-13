@@ -69,20 +69,23 @@ def extract_round(text: Optional[str]) -> Optional[str]:
         if n: return f"제{n}회"
     return None
 
-def _row_cells(tr):
-    """<tr> → 정리된 텍스트 셀 배열(빈 문자열/nbsp 제거)"""
-    tds = tr.find_all(["td","th"])
-    cells = [clean(td.get_text(" ", strip=True)) for td in tds]
-    return [c for c in cells if c]
-
 def _dateish(s: Optional[str]) -> bool:
     return bool(s and DATE_ANY.search(s))
 
 def _coalesce_date_field(value: Optional[str]) -> Optional[str]:
-    if not value: return None
-    dates = DATE_SINGLE.findall(value)
-    if not dates: return None
-    if len(dates) == 1: return dates[0]
+    if not value: 
+       return None
+    s = value.strip()
+    dates = DATE_SINGLE.findall(s)
+    if not dates: 
+       return None
+    
+    if "~" in s and len(dates) == 1: 
+        return f"{dates[0]} ~"
+    
+    if len(dates) == 1:
+        return dates[0]
+
     return f"{dates[0]} ~ {dates[-1]}"
 
 def _sanitize_dates(rec: Dict) -> None:
@@ -299,7 +302,7 @@ def parse_schedule_tables(tables: List[Dict]) -> List[Dict]:
             continue
 
         header_text = "".join(norm(x) for x in headers)
-        if not any(k in header_text for k in ("원서","접수","필기","실기","면접","발표","회차","구분","시험일정","서류","의견제시")):
+        if not any(k in header_text for k in ("원서","접수","필기","실기","면접","1차", "2차", "발표","회차","구분","시험일정","서류","의견제시")):
             continue
 
         header_has_chasu = _header_has_chasu(headers)
@@ -332,8 +335,8 @@ def parse_schedule_tables(tables: List[Dict]) -> List[Dict]:
             base = {"회차":None,"phase":None,
                     "접수기간":None,"추가접수기간":None,"서류제출기간":None,
                     "시험일":None,"의견제시기간":None,"발표":None,"정답발표":None}
-            bucket = {None: base.copy(), "필기": base.copy(), "실기": base.copy(), "면접": base.copy()}
-            phase_touch = {None:0, "필기":0, "실기":0, "면접":0}
+            bucket = {None: base.copy(), "필기": base.copy(), "실기": base.copy(), "면접": base.copy(), "1차":base.copy(), "2차":base.copy()}
+            phase_touch = {None:0, "필기":0, "실기":0, "면접":0, "1차":0, "2차":0}
 
             # 1) 첫 셀에서 회차 추출
             first_cell_round = extract_round(first_cell_raw)
@@ -354,6 +357,8 @@ def parse_schedule_tables(tables: List[Dict]) -> List[Dict]:
                     if "필기" in txt: bucket["필기"]["회차"] = vr
                     if "실기" in txt: bucket["실기"]["회차"] = vr
                     if "면접" in txt: bucket["면접"]["회차"] = vr
+                    if "1차" in txt: bucket["1차"]["회차"] = vr
+                    if "2차" in txt: bucket["2차"]["회차"] = vr
                     continue
 
                 eff_phase = phase if phased_table else None
@@ -367,7 +372,7 @@ def parse_schedule_tables(tables: List[Dict]) -> List[Dict]:
                     print(f"[COL] hdr='{headers[i]}' val='{val}' -> eff_phase={eff_phase} field_eff={field_eff} row_phase={row_phase}")
 
                 # 중립헤더 + 행 phase 라우팅
-                if eff_phase is None and row_phase in ("필기","실기","면접"):
+                if eff_phase is None and row_phase in ("필기","실기","면접", "1차", "2차"):
                     target_bucket = bucket[row_phase]; target_phase = row_phase
                 else:
                     target_bucket = bucket[eff_phase] if eff_phase in bucket else bucket[None]
@@ -396,7 +401,7 @@ def parse_schedule_tables(tables: List[Dict]) -> List[Dict]:
                 has_payload = any(rec.get(k) for k in ("접수기간","추가접수기간","서류제출기간","시험일","의견제시기간","발표","정답발표"))
                 if not has_payload: continue
                 if ph in suppress_phases: continue
-                if phased_table and ph in ("필기","실기","면접") and phase_touch.get(ph,0) == 0:
+                if phased_table and ph in ("필기","실기","면접","1차","2차") and phase_touch.get(ph,0) == 0:
                     continue
 
                 rec["phase"] = ph
@@ -422,9 +427,9 @@ def parse_schedule_tables(tables: List[Dict]) -> List[Dict]:
                 expanded = expand_by_round_and_chasu(rec) if use_chasu else expand_by_round(rec)
                 phase_records.extend(expanded)
 
-            has_real = any(r["phase"] in ("필기","실기","면접") for r in phase_records)
+            has_real = any(r["phase"] in ("필기","실기","면접","1차","2차") for r in phase_records)
             if phased_table and has_real and row_phase:
-                phase_records = [r for r in phase_records if r["phase"] in ("필기","실기","면접")]
+                phase_records = [r for r in phase_records if r["phase"] in ("필기","실기","면접","1차","2차")]
 
             for rr in phase_records:
                 if rr.get("회차"):

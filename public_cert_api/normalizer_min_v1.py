@@ -1,8 +1,8 @@
 # normalizer_min_v1.py (PATCH)
 from pathlib import Path
 import argparse, json
-from public_cert_api.paths import RAW_DIR, DATA_DIR
-from public_cert_api.normalizers.v1_core.build import build_norm
+from .paths import RAW_DIR, DATA_DIR
+from .normalizers.v1_core.build import build_norm
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--jmcd", required=True)

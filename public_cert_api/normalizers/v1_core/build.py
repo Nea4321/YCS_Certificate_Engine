@@ -338,7 +338,12 @@ def build_norm(raw: dict, jmcd: str, name: str | None, type_str: str | None, iss
     outlook = patch_outlook_safely(outlook_raw) or outlook_raw
 
     # ---- 합격 통계(어댑터 실행 → 레거시 보강 → 연도 정리)
-    pass_rows, _, _ = run_adapters(bi_tables, ex_tables)
+    pass_rows, adapters_used, meta = run_adapters(bi_tables, ex_tables)
+    if adapters_used:
+       print(f"[adapters] used={adapters_used} conf={meta.get('confidence')}")
+       print(f"[adapters] rows={len(pass_rows)} sample={pass_rows[:2]}")
+    else:
+       print("[adapters] no match")
     pass_rows = _append_legacy_band_and_total(pass_rows or [], bi_tables)
     pass_rows = _fix_year_rows(pass_rows)
 
@@ -384,20 +389,30 @@ def build_norm(raw: dict, jmcd: str, name: str | None, type_str: str | None, iss
     pref_full = parse_preference({"paragraphs": pr_paras, "tables": pr_tables}, name)
     pref_slim = _slim_preference(pref_full)
 
+    # 2) 시험일정: 리스트로 강제 고정 (또는 dict로 고정 선택)
+    events_block = parse_schedule_tables(ex_tables) or {}
+    if isinstance(events_block, dict):
+       events = events_block.get("events") or []
+    elif isinstance(events_block, list):
+       events = events_block
+    else:
+       events = []
+
+
     return {
         "_meta": _make_meta(jmcd=jmcd, name=name, type_str=type_str, issued_by=issued_by),
         "기본정보": {
             "개요": overview,
-            "변천과정": history or [],
+            #"변천과정": history or [],
             "실시기관": org,
             "소관부처명": ministry,
-            "통계자료": stats_tbl,
+            #"통계자료": stats_tbl,
             "수행직무": duties,
             "진로및전망": outlook,              # ← 최종 정리값 사용
-            "종목별검정현황": pass_rows or [],
         },
-        "시험일정": {"정기검정일정": parse_schedule_tables(ex_tables)},
+        "시험일정": events,
         "시험정보": exam_info,
+        "종목별검정현황": pass_rows or [],
         "우대현황": pref_slim,
         "링크": final_links,
     }

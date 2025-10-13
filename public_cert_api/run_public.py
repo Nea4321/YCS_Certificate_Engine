@@ -8,19 +8,36 @@ from .normalizers.v1_core.build_trace import build_norm_with_trace
 # run_public.py 상단
 import csv
 import os
+import re
+
+def _clean_jmcd(s: str) -> str | None:
+    # 앞뒤 공백, 따옴표, BOM 제거
+    s = (s or "").strip().lstrip("\ufeff").strip("'\"")
+    # 숫자만 남기기
+    s = re.sub(r"\D+", "", s)
+    # 4자리만 유효
+    return s if len(s) == 4 else None
+#BOM을 제거 하기 위해 이 함수를 쓰며 BOM이란 텍스트 파일 맨 앞에 붙는 특수한 표시로 UTF-8에서는 바이트 3개 EF BB BF (10진수 239, 187, 191), 파이썬에선 문자 '\ufeff'.이다
+#리스트의 첫 줄앞에 BOM이 있으면 그 줄이 이상하게 읽혀서 경로를 못 찾는 상황이 발생하므로 
+#반드시 지워야 한다. 어쩌다가 생긴진 모르겠는데 내가 무의식적으로 새로운 걸 추가했다 지우고 새로 저장해서 생겼을 가능성도 있음
+#그래서 사전에 아예 지워버리고 시작한다
 
 def load_idmap(csv_path: str) -> dict[str, dict]:
-    if not csv_path: return {}
-    mp = {}
-    with open(csv_path, newline="", encoding="utf-8") as f:
+    if not csv_path:
+        return {}
+    mp: dict[str, dict] = {}
+    # CSV도 BOM 가능 → utf-8-sig
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
         for r in csv.DictReader(f):
-            jmcd = (r.get("jmcd") or "").strip()
-            if not jmcd: continue
+            jmcd = _clean_jmcd(r.get("jmcd") or "")
+            if not jmcd:
+                continue
             mp[jmcd] = {
                 "certificate_id": (r.get("certificate_id") or "").strip(),
                 "certificate_name": (r.get("certificate_name") or "").strip(),
             }
     return mp
+
 
 
 def run(cmd: list[str]) -> None:
@@ -73,19 +90,28 @@ def ensure_free_space(root: Path, min_free_gb: float) -> None:
     if free_gb < min_free_gb:
         raise SystemExit(f"ENOSPC: free={free_gb:.1f}GB < {min_free_gb}GB")
 
-def iter_jmcds(arg_jmcd: str|None, list_file: str|None, root: Path):
+def iter_jmcds(arg_jmcd: str | None, list_file: str | None, root: Path):
     if arg_jmcd:
-        yield arg_jmcd
+        cj = _clean_jmcd(arg_jmcd)
+        if cj:
+            yield cj
         return
+
     if list_file:
-        for line in Path(list_file).read_text(encoding="utf-8").splitlines():
-            line=line.strip()
-            if line: yield line
+        # 리스트 파일은 무조건 utf-8-sig 로 읽어 BOM 자동 제거
+        with open(list_file, encoding="utf-8-sig") as f:
+            for line in f:
+                cj = _clean_jmcd(line)
+                if cj:
+                    yield cj
         return
-    # 리스트를 안 주면 root 하위 디렉터리명을 jmcd로 간주
+
+    # 리스트를 안 주면 디렉터리명에서 추출
     for d in sorted(p.name for p in root.iterdir() if p.is_dir()):
-        if d.isdigit():
-            yield d
+        cj = _clean_jmcd(d)
+        if cj:
+            yield cj
+
 
 def run_normalize_with_trace(root: Path, jmcd: str, cert_meta: Optional[Dict] = None):
     jm_dir = root / jmcd
@@ -218,10 +244,15 @@ def main():
                 if args.cookies:
                    cmd += ["--cookies", args.cookies]
                 if args.cookie_log:
-                   # 런 직전에 env로 넘겨도 되고, fetch 쪽이 플래그를 읽게 했으면 그대로 둠
                    os.environ["FETCH_COOKIE_LOG"] = "1"
-                   run(cmd)
-                   have_htmls = exists_htmls(jm_root)
+
+                run(cmd)
+                have_htmls = exists_htmls(jm_root)
+                #run(cmd)는 public_cert_api.fetch_qnet_tabs로 자식 파이썬 프로세스를 띄우고
+                #자식 프로세스는 시작 시점에 부모(run_public)의 환경변수를 가져가므로 쿠키 로깅(쿠키 발급과정을 보여줌)을 켜려면
+                #run(cmd)를 호출 직전에 os.environ["FETCH_COOKIE_LOG"] = "1" -> 이걸로 설정해야 됨
+                #따라서 cookie.log안에 run(cmd)를 쓸 경우 이미 호출한 상태에서 쿠키 로깅을 키는 것이므로
+                #의미가 없다 그래서 반드시 호출전에 찍어야 된다.  
         else:
             print("[skip] fetch (steps)")
 
@@ -241,7 +272,7 @@ def main():
             if not should(have_norm):
                 print("[skip] normalize (resume)")
             else:
-                cmd = [sys.executable, "-m", "normalizer_min_v1",
+                cmd = [sys.executable, "-m", "public_cert_api.normalizer_min_v1",
                        "--jmcd", jmcd, "--root", str(root)]
                 if out_root:
                     cmd += ["--out", str(out_root)]

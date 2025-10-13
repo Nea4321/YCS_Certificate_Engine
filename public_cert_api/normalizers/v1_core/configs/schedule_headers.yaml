@@ -1,6 +1,6 @@
 version: 1
 
-row_phase_tokens: ["필기", "실기", "면접", "구술"]   # 행의 구분/회차에서 phase 감지
+row_phase_tokens: ["필기", "실기", "면접", "구술", "1차", "2차"]   # 행의 구분/회차에서 phase 감지
 
 fields:
   회차:
