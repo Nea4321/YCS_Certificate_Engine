@@ -11,11 +11,9 @@
 Engine/
  ├─ public_cert_api/           # Q-Net(공개) 파이프라인: fetch/parse/normalize 러너
  ├─ private-cert-crawl/        # 사설(학교/민간) 크롤러 모음
- ├─ normalizer_min_v1          # 정규화 패키지(모듈로 실행)
  ├─ tools/
- │   └─ export_certs.py        # DB에서 certificate_id, jmcd, name → certs.csv 내보내기
- ├─ scripts/
- │   └─ engine_bootstrap       # (선택) 의존성 설치 도우미
+ │   └─ export_certs.py        # DB에서 certificate_id,jmcd,certificate_name,organization_id,inst → certs.csv 내보내기
+ |
  ├─ .gitignore / requirements.txt / README.md / run_once.py ...
 ```
 
@@ -25,21 +23,51 @@ Engine/
 
 ### A. 필수 요건
 - **Python 3.11+**
+
 - **Chrome 최신 버전** (Selenium이 자동으로 ChromeDriver를 맞춰줍니다)
 - (Windows) PowerShell 또는 Git Bash
 
+# Windows(파이썬 설치)
+winget install Python.Python.3.11
+
 ### B. 가상환경 & 의존성
 ```bash
-python -m venv .venv
+python -3.11 -m venv .venv or py -3.11 -m venv .venv 
+
+안되면 python -m venv .venv
+
 
 # Windows
-. ./.venv/Scripts/Activate.ps1
+.\.venv\Scripts\Activate.ps1
 # macOS/Linux
 source ./.venv/bin/activate
 
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
+-> 이 가상환경을 쓰는 이유는 의존성 격리와 재현성을 이용해 쉽게 복원하고
+   업그레이드/롤백을 안전하게 해서 실패하면 가상환경만 지우면 끝이고
+   권한 이슈가 감소되서 로컬에서 설치가 가능해지기 때문입니다.
+
+### B-2. 작업 루트(예: chansol_api) 만들기
+
+# 예시: C:\cert-data\chansol_api 를 작업 루트로 사용
+
+# Windows
+
+New-Item -ItemType Directory -Force "C:\cert-data\chansol_api" | Out-Null
+$BASE = "C:\cert-data"
+$ROOT = Join-Path $BASE 'chansol_api'
+
+# macOS/Linux
+
+mkdir -p ~/cert-data/chansol_api
+BASE=~/cert-data
+ROOT="$BASE/chansol_api"
+
+-> 비단 이것뿐 아니라 엔진의 산출물들을 만들 떄 필요한 폴더나 파이썬 
+   파일들의 위치는 사용자 본인이 스스로 설정해도 상관없습니다.
+
 
 ### C. 입력 데이터 준비
 정규화 러너는 **탭별 HTML 또는 파싱된 JSON**이 있는 루트를 요구합니다. 예시 구조:
@@ -54,58 +82,97 @@ C:\cert-data\chansol_api\1320\
 
 > 스냅샷 모드(`--mode snapshot`)에서는 **fetch 단계를 건너뛰고** 위 파일들을 바로 parse/normalize 합니다.
 
-### D. 단일 종목만 실행(예: 정보처리기사 `1320`)
-```powershell
-# 상대경로 예시(Engine 루트에서 상위의 cert-data 폴더를 기준으로 잡기)
-$BASE = Resolve-Path ..\..\..            # => C:\cert-data
-$ROOT = Join-Path $BASE 'chansol_api'    # => C:\cert-data\chansol_api
 
-python -m public_cert_api.run_public `
-  --root "$ROOT" `
-  --jmcd 1320 `
-  --mode snapshot `
-  --steps parse,normalize `
-  --force `
-  --display-name "정보처리기사"
-```
+### C-2. certificate_id 매핑(선택)
+정규화 산출물의 `_meta.certificate_id`를 채우고 싶다면 **`tools/export_certs.py`**로 CSV를 만듭니다.
 
+
+### D. 한 종목 일괄 실행(fetch,parse,normalize)
+특정한 한 종목만 실행하고 싶을 땐 이렇게 씁니다.(우선 자격증의 html 산출물이 있어야 되는데 그게 없다면 큐넷에서 fetch하고, 그걸 json으로 parse한 후, 정규화 작업인 normalize를 한다.)
 $BASE = Resolve-Path ..\..\..  
 $ROOT = Join-Path $BASE 'chansol_api'  
 $CSV  = Join-Path $BASE 'certs.csv'      
-python -m public_cert_api.run_public  --root "$ROOT"   --csv  "$CSV"  --jmcd 0080   --mode snapshot   --steps normalize   --force
-자격증 id까지 더 쓰고 싶을 땐 이렇게 씁니다.
+python -m public_cert_api.run_public`  
+    --root "$ROOT" `   
+    --csv  "$CSV"  `
+    --jmcd 0080   `
+    --mode http   `
+    --steps fetch,parse,normalize
+
+# 여기에 만약 잘못 만들거나 새롭게 만든 걸 기존에 있던 산출물에 추가하고 싶다면 --force를 써서 덮어씌우면 된다.     
+
 
 ### E. 여러 종목 일괄 실행
-`targets.txt`에 JMCD를 한 줄에 하나씩 넣고 실행합니다.
+`r013.txt`에 JMCD를 한 줄에 하나씩 넣고 실행합니다.(r013은 국가기관만이 있는 것으로 타기관은 'others.txt' 파일로 돌린다 섞일 수도 있을 위험을 배제)
+마찬가지로 여기에 있는 명령어들도 처음부터 만든다는 전제하에 이렇게 쓰는 거고 만약 덮어씌우고 싶으면 --force를 씀
 ```text
 1320
 0370
 0752
 ```
 ```powershell
+
+#국가
 python -m public_cert_api.run_public `
   --root "$ROOT" `
-  --list C:\cert-data\targets.txt `
-  --mode snapshot `
-  --steps parse,normalize `
-  --resume
+  --list ".\r013.txt" `
+  --mode http `
+  --steps fetch,parse,normalize `
+
+#타기관
+python -m public_cert_api.run_public `
+  --root "$ROOT" `
+  --list ".\others.txt" `
+  --mode shttp `
+  --steps fetch,parse,normalize
+
+### E-2. 쿠키를 받아서 안정적으로 확인하고 싶을 때
+python -m public_cert_api.run_public `
+  --root "$ROOT" `
+  --csv  "$CSV" `
+  --jmcd 0451 `
+  --steps fetch,parse,normalize `
+  --mode http `
+  --force `
+  --prewarm
+  --cookie_log
+
+-> --cookie_log를 이용해서 쿠키를 받아왔는지에 대한 로그를 볼 수 있고
+   서버에서 쿠키를 받아서 직접 요청하고 싶다면 --prewarm을 쓴다.
+
+python -m public_cert_api.run_public `
+  --root "$ROOT" `
+  --csv  "$CSV" `
+  --jmcd 0451 `
+  --steps fetch,parse,normalize `
+  --mode http `
+  --force `
+  --cookies "C:\cert-data\chansol_api\cookies.txt" `
+  --cookie_log
+
+-> --prewarm으로 했는데도 제대로 못 받아서 문제가 생겼다면 cookies.txt 
+   파일을 기준으로 제대로 받을 수 있게 한다.(절대경로는 후에 사용자가 상대경로로 고치면 되고 지금 올라가 있는 파일 기준으로는 찬솔api 폴더 안에 있음)        
+
+
+### F. 산출물 확인(Powershell)
+```
+$all = Get-ChildItem $ROOT -Recurse -Include *.norm.json -File
+$since = (Get-Date).AddHours(-2)      # 기준 창 설정
+$recent = $all | Where-Object { $_.LastWriteTime -ge $since }
+"total=$($all.Count)  recent=$($recent.Count)  all_recent? " + ($recent.Count -eq $all.Count)
+=> 664개 전량이 잘 돌아갔는지 확인하는 명령어 즉 664개(r013 + others.txt)의 norm.json이 최신화됐는지 확인함
 ```
 
-### F. 산출물
+
+### E. 산출물
 실행 후 각 종목 폴더 안에 다음이 생깁니다.
 
 - `{jmcd}.json` : 파싱 중간 산출물
 - `{jmcd}.norm.json` : **최종 정규화 결과**
 - `norm_trace.json` : 정규화 **추적/근거(trace)** (검수용)
-- `issues.jsonl`(루트): 종목별 이슈(경고/누락) 기록
-
-> `exam_method.errors`에 `phase_none_payload`만 있고 다른 필드가 정상이라면 **콘텐츠 자체가 없었던 케이스**로 간주하며 실패가 아닙니다.
-
 ---
 
-## 2) certificate_id 매핑(선택)
 
-정규화 산출물의 `_meta.certificate_id`를 채우고 싶다면 **`tools/export_certs.py`**로 CSV를 만듭니다.
 
 ### A. .env 템플릿(팀 내부 DB 접속이 가능한 경우만 사용)
 > **중요**: `.env`는 절대 커밋하지 않습니다.
