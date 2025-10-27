@@ -18,10 +18,9 @@ Engine/
 
 ---
 
-## 1) 빠른 시작 (공개 Q-Net 정규화만 돌려보기)
+## 1) 빠른 시작 (공개 Q‑Net 정규화만 돌려보기)
 
 ### A. 필수 요건
-
 - **Python 3.11+**
 - **Chrome 최신 버전** (Selenium이 자동으로 ChromeDriver를 맞춰줍니다)
 - (Windows) **PowerShell** 또는 (macOS/Linux) **bash**
@@ -46,38 +45,37 @@ python -m venv .venv
 ```
 
 **활성화 & 설치**
+- Windows (PowerShell)
+  ```powershell
+  .\.venv\Scripts\Activate.ps1
+  python -m pip install --upgrade pip
+  python -m pip install -r requirements.txt
+  ```
 
-- Windows (PowerShell):
-```powershell
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
+- macOS/Linux (bash)
+  ```bash
+  source ./.venv/bin/activate
+  python -m pip install --upgrade pip
+  python -m pip install -r requirements.txt
+  ```
 
-- macOS/Linux (bash):
-```bash
-source ./.venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
-
-### B-2. 작업 루트(예: `chansol_api`) 만들기
+### B‑2. 작업 루트(예: `chansol_api`) 만들기
 
 > 엔진이 산출물을 쓰고 읽을 **루트 폴더**입니다. 경로는 사용자가 자유롭게 정해도 됩니다.
 
-- Windows:
-```powershell
-New-Item -ItemType Directory -Force "C:\cert-data\chansol_api" | Out-Null
-$BASE = "C:\cert-data"
-$ROOT = Join-Path $BASE 'chansol_api'
-```
+- Windows
+  ```powershell
+  New-Item -ItemType Directory -Force "C:\cert-data\chansol_api" | Out-Null
+  $BASE = "C:\cert-data"
+  $ROOT = Join-Path $BASE 'chansol_api'
+  ```
 
-- macOS/Linux:
-```bash
-mkdir -p ~/cert-data/chansol_api
-BASE=~/cert-data
-ROOT="$BASE/chansol_api"
-```
+- macOS/Linux
+  ```bash
+  mkdir -p ~/cert-data/chansol_api
+  BASE=~/cert-data
+  ROOT="$BASE/chansol_api"
+  ```
 
 ---
 
@@ -96,31 +94,32 @@ C:\cert-data\chansol_api\1320\
 ```
 
 > `--mode snapshot` : **fetch 단계를 건너뛰고**, 위 HTML/JSON 스냅샷을 바로 parse/normalize 합니다.  
-> `--mode http` : Q-Net에서 직접 요청해 **fetch → parse → normalize** 순서로 수행합니다.
+> `--mode http` : Q‑Net에서 직접 요청해 **fetch → parse → normalize** 순서로 수행합니다.
 
-### C-2. certificate_id 매핑(선택)
+### C‑2. certificate_id 매핑(선택)
 
 정규화 산출물의 `_meta.certificate_id`를 채우고 싶다면 **`tools/export_certs.py`**로 CSV를 만듭니다.
 
 ---
 
-### D. 한 종목 실행 (fetch → parse → normalize)
 
-> HTML 스냅샷이 없으면 `--mode http`에서 **fetch**로 받아옵니다.
-
-**PowerShell**
+### C-3. 정규화 결과에 주입
 ```powershell
-$BASE  = Resolve-Path ..\..\..
-$ROOT  = Join-Path $BASE 'chansol_api'
-$CSV   = Join-Path $BASE 'certs.csv'      # 선택(있으면 _meta 보강)
+$BASE = Resolve-Path ..\..\..
+$ROOT = Join-Path $BASE 'chansol_api'
+$CSV  = Join-Path $PWD  'out\certs.csv'   # Engine/out/certs.csv
 
 python -m public_cert_api.run_public `
   --root "$ROOT" `
   --csv  "$CSV" `
-  --jmcd 0080 `
-  --mode http `
-  --steps fetch,parse,normalize
+  --jmcd 1320 `
+  --mode snapshot `
+  --steps normalize `
+  --force
 ```
+> CSV 없이도 실행은 됩니다. 이 기능은 **certificate_id/name을 `_meta`에 보강**하고 싶을 때만 사용하세요.
+
+---
 
 > 기존 산출물을 **덮어써야** 하면 `--force`를 추가하세요.
 
@@ -145,8 +144,7 @@ python -m public_cert_api.run_public `
   --steps fetch,parse,normalize
 ```
 
-**타기관 (PowerShell)**  
-스냅샷이 준비되어 있다면 `--mode snapshot` 으로 바로 파싱/정규화:
+**타기관 (PowerShell)** — 스냅샷이 준비되어 있다면 `--mode snapshot` 으로 바로 파싱/정규화:
 ```powershell
 python -m public_cert_api.run_public `
   --root "$ROOT" `
@@ -159,7 +157,7 @@ python -m public_cert_api.run_public `
 
 ---
 
-### E-2. 쿠키 기반 안정화 옵션
+### E‑2. 쿠키 기반 안정화 옵션
 
 **미리 서버에서 쿠키를 받아두고 요청하려면:**
 ```powershell
@@ -224,6 +222,7 @@ Spring에서 소비하려면 결과 JSON을 **Spring 프로젝트의 `src/main/r
 ## 4) CSV 내보내기 & 정규화 결과에 주입(선택)
 
 ### A. .env 템플릿(팀 내부 DB 접속 가능 시)
+
 > **중요**: `.env`는 절대 커밋하지 않습니다.
 
 ```
@@ -243,24 +242,6 @@ python tools/export_certs.py
 # 기본 출력: Engine/out/certs.csv
 # 환경변수 CERT_EXPORT_CSV 로 경로 변경 가능
 ```
-
-### C. 정규화 결과에 주입
-```powershell
-$BASE = Resolve-Path ..\..\..
-$ROOT = Join-Path $BASE 'chansol_api'
-$CSV  = Join-Path $PWD  'out\certs.csv'   # Engine/out/certs.csv
-
-python -m public_cert_api.run_public `
-  --root "$ROOT" `
-  --csv  "$CSV" `
-  --jmcd 1320 `
-  --mode snapshot `
-  --steps normalize `
-  --force
-```
-> CSV 없이도 실행은 됩니다. 이 기능은 **certificate_id/name을 `_meta`에 보강**하고 싶을 때만 사용하세요.
-
----
 
 ## 5) 커밋/배포 가이드
 
@@ -289,3 +270,151 @@ python -m public_cert_api.run_public `
 ## 7) 라이선스
 
 프로젝트 루트의 `LICENSE` 파일을 따릅니다.
+
+---
+
+## 8) Spring 통해 Engine 실행하기 (APP_BASE 규칙)
+
+Spring 앱이 파이썬 엔진을 호출할 때 **실행 위치에 영향받지 않도록** 루트 경로를 환경변수로 주입합니다.
+
+### A. Spring 설정 (이미 반영되어 있으면 그대로 사용)
+
+`application.properties`
+```properties
+# 루트 기준(없으면 user.dir)
+app.base=${APP_BASE:${user.dir}}
+
+public.root=${app.base}
+engine.script=${app.base}/Engine/run_once.py
+engine.config=${app.base}/Engine/private-cert-crawl/configs/cert_map.yaml
+public.script=${app.base}/Engine/public_cert_api/run_public.py
+
+# 로컬 윈도우 가상환경 (도커/리눅스는 PYTHON_PATH로 덮어쓰기)
+python.path=${PYTHON_PATH:${app.base}/Engine/.venv/Scripts/python.exe}
+python.args=-X utf8
+```
+> 이 설정만 있으면 **자바 코드는 추가 변경 불필요**합니다. (`EngineRunner`가 위 프로퍼티를 읽어 실행)
+
+### B. 환경별 실행 방법
+
+#### 1) 로컬 (Windows PowerShell)
+```powershell
+$env:APP_BASE="C:\내_루트\ycs"   # 본인 PC의 Engine 상위 폴더
+# (선택) $env:PYTHON_PATH="$env:APP_BASE\Engine\.venv\Scripts\python.exe"
+java -jar app.jar
+```
+
+#### 2) 로컬 (Linux/macOS)
+```bash
+APP_BASE=/home/ubuntu/ycs \
+PYTHON_PATH=/home/ubuntu/ycs/Engine/.venv/bin/python \
+java -jar app.jar
+```
+
+#### 3) JVM 옵션으로 주입
+```bash
+java -DAPP_BASE="/home/ubuntu/ycs" \
+     -DPYTHON_PATH="/home/ubuntu/ycs/Engine/.venv/bin/python" \
+     -jar app.jar
+```
+
+#### 4) IntelliJ Run/Debug
+- **Environment variables**  
+  `APP_BASE=D:\my-ycs;PYTHON_PATH=D:\my-ycs\Engine\.venv\Scripts\python.exe`
+- 또는 **VM options**  
+  `-DAPP_BASE=D:\my-ycs -DPYTHON_PATH=D:\my-ycs\Engine\.venv\Scripts\python.exe`
+
+#### 5) systemd (서비스)
+```ini
+[Service]
+WorkingDirectory=/opt/ycs
+Environment=APP_BASE=/opt/ycs
+Environment=PYTHON_PATH=/opt/ycs/Engine/.venv/bin/python
+ExecStart=/usr/bin/java -jar /opt/ycs/app.jar
+```
+
+#### 6) Docker
+
+**Dockerfile (예시)**
+```dockerfile
+FROM eclipse-temurin:21-jre
+WORKDIR /opt/ycs
+COPY app.jar /opt/ycs/app.jar
+COPY Engine/ /opt/ycs/Engine/
+# (선택) venv 구성 및 의존 설치
+# RUN apt-get update && apt-get install -y python3 python3-venv && \
+#     python3 -m venv /opt/ycs/Engine/.venv && \
+#     /opt/ycs/Engine/.venv/bin/pip install -r /opt/ycs/Engine/requirements.txt
+ENV APP_BASE=/opt/ycs
+CMD ["java","-jar","/opt/ycs/app.jar"]
+```
+
+**docker run**
+```bash
+docker run \
+  -e APP_BASE=/opt/ycs \
+  -e PYTHON_PATH=/opt/ycs/Engine/.venv/bin/python \
+  -v /host/ycs:/opt/ycs \
+  app-image
+```
+
+### C. 팀 운영 규칙(요약)
+- **각자 경로는 제각각이어도 됨.** 자신의 **Engine 상위 폴더**를 `APP_BASE`로 지정하면 끝.
+- 엔진 내부 구조는 고정(필수):
+  - `Engine/run_once.py`
+  - `Engine/public_cert_api/run_public.py`
+  - `Engine/private-cert-crawl/...`
+- 도커/서버에서도 동일: 컨테이너/서버 내에 위 구조를 두고 `APP_BASE`·`PYTHON_PATH`만 설정.
+
+### D. 팀원 셋업을 쉽게 하는 팁(선택)
+
+`.env.local.template` (레포에 커밋)
+```
+APP_BASE=D:\my-ycs
+PYTHON_PATH=D:\my-ycs\Engine\.venv\Scripts\python.exe
+```
+> `.env.local`는 **.gitignore** 처리하고 각자 복사/수정해서 사용.
+
+`scripts/run-local.ps1` (Windows)
+```powershell
+$envFile = Join-Path $PSScriptRoot "..\.env.local"
+if (Test-Path $envFile) {
+  Get-Content $envFile | ForEach-Object {
+    if ($_ -match '^\s*#' -or $_ -match '^\s*$') { return }
+    $k,$v = $_.Split('=',2)
+    Set-Item -Path Env:$k.Trim() -Value $v.Trim()
+  }
+}
+if (-not $env:APP_BASE) { throw "APP_BASE not set. Create .env.local" }
+java -jar "$PSScriptRoot\..\app.jar"
+```
+
+`scripts/run-local.sh` (Linux/macOS)
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+ENV_FILE="$(dirname "$0")/../.env.local"
+if [[ -f "$ENV_FILE" ]]; then
+  export $(grep -v '^\s*#' "$ENV_FILE" | xargs)
+fi
+: "${APP_BASE:?APP_BASE not set. Create .env.local}"
+exec java -jar "$(dirname "$0")/../app.jar"
+```
+
+### E. 빠른 점검(선택)
+
+앱 시작 시 실제 적용 경로를 로그로 확인(선택):
+
+```java
+@PostConstruct
+void logPaths() {
+  log.info("app.base={}", env.getProperty("app.base"));
+  log.info("python.path={}", env.getProperty("python.path"));
+  log.info("engine.script={}", env.getProperty("engine.script"));
+  log.info("public.script={}", env.getProperty("public.script"));
+}
+```
+
+원하는 **절대경로**가 찍히면 설정 OK.
+
+---

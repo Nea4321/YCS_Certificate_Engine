@@ -8,7 +8,10 @@ beautifulsoup4>=4.12
 selenium>=4.21
 webdriver-manager>=4.0
 
-psycopg[binary]
+# DB 드라이버(플랫폼별 자동 선택)
+psycopg2-binary==2.9.9 ; platform_system == "Windows"
+psycopg2==2.9.9        ; platform_system != "Windows"
+
 SQLAlchemy>=2.0
 redis>=5
 python-dotenv
