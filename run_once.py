@@ -1,9 +1,10 @@
-# run_once.py
+# run_once.py산
 # -*- coding: utf-8 -*-
 
 import argparse, importlib, json, yaml, inspect, sys
 from pathlib import Path
 from typing import Iterable, Optional
+from collections import OrderedDict
 
 # ───────────────────────── paths / imports ─────────────────────────
 ROOT = Path(__file__).parent
@@ -148,11 +149,61 @@ def run(
     # 최종 스키마 검증
     RootV1.model_validate(root)
 
-    # 저장
-    out_path = Path(out) if out else default_output_for(cert)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(root, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"✔ saved: {out_path}")
+    # ── (추가) 공공용: 시험일정을 리스트로 평탄화한 사본 저장
+    def _save_flat_schedule_copy(root: dict, out_path: Path):
+        # 1) 시험일정 평탄화
+        sched = root.get("시험일정")
+        if isinstance(sched, list):
+           rounds = sched
+           times = root.get("시험시간") or []
+        elif isinstance(sched, dict):
+            rounds = (
+              sched.get("정기검정일정")
+              or sched.get("정기")
+              or sched.get("rounds")
+              or []
+            )
+            times = (
+                sched.get("시험시간")
+                or sched.get("입실및시험시간")
+                or sched.get("입실 및 시험시간")
+                or []
+            )
+        else:
+            rounds, times = [], []
+
+        # 2) 루트에도 시간표가 있으면 보강
+        if not times:
+            times = (
+              root.get("시험시간")
+              or root.get("입실및시험시간")
+              or root.get("입실 및 시험시간")
+              or []
+            )
+
+        # 3) 보기 좋은 순서로 구성 (_meta → 시험일정 → 시험시간 → 시험내용)
+        flat = OrderedDict()
+        flat["_meta"] = root.get("_meta", {})
+        flat["시험일정"] = rounds
+        flat["시험시간"] = times
+        if "시험내용" in root:
+           flat["시험내용"] = root["시험내용"]
+
+        # 4) 저장
+        flat_path = out_path
+        flat_path.write_text(json.dumps(flat, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"✔ saved(flat): {flat_path}")
+
+         # 저장
+    out_path = Path(out)
+    if out_path.is_dir():
+        filename= f"{cert}.norm.json"
+        out_path = out_path/filename
+    #out_path.parent.mkdir(parents=True, exist_ok=True)
+    #out_path.write_text(json.dumps(root, ensure_ascii=False, indent=2), encoding="utf-8")
+    #print(f"✔ saved: {out_path}")
+
+    _save_flat_schedule_copy(root, out_path)   # ← 여기
 
 def _infer_cert_from_cwd(cfg) -> Optional[str]:
     """

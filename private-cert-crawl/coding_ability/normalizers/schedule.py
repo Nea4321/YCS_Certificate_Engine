@@ -65,8 +65,10 @@ def normalize_schedule(raw: dict, base_year: int | None = None) -> dict:
     for t in times_in:
         show_time = t.get("시험시간표시") or t.get("시험시간")
         start, end = _split_time_range(show_time or "")
+        
+        grade = t.get("등급") or t.get("급수")  # 🔹 둘 다 지원
         times.append(_prune({
-            "등급": t.get("등급"),
+            "등급": grade,
             "차수": t.get("차수"),
             "교시": t.get("교시"),
             "입실완료시간": t.get("입실완료시간"),
